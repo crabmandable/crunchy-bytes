@@ -1,0 +1,21 @@
+namespace = "cereal_pack::test::nesting"
+name = "Nesting"
+
+[props]
+    [props.bool_ref]
+    type = "reference"
+    reference = "OneBool"
+
+    [props.simple_ref]
+    type = "reference"
+    reference = "cereal_pack::test::SimpleTest"
+
+    [props.set_of_bool]
+    type = "set"
+    max_items = 5
+    item = { type = "reference", reference = "OneBool" }
+
+    [props.set_of_simple]
+    type = "set"
+    max_items = 5
+    item = { type = "reference", reference = "cereal_pack::test::SimpleTest" }
