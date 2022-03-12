@@ -19,75 +19,85 @@ class Prop:
         if re.match('^\w+$', name) is None:
             raise CerealPackException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
 
-        if 'type' not in dict:
-            raise CerealPackException(file_path, err_in, '"type" not found in "{}" prop'.format(name))
-        if dict['type'] not in property_types:
-            raise CerealPackException(file_path, err_in, 'unknown property type "{}"'.format(dict['type']))
+        self.validate_prop(err_in, dict)
 
         self.type = dict['type']
         property_type = property_types[self.type]
 
-        if self.type == 'reference' and 'reference' not in dict:
-            raise CerealPackException(file_path, err_in, 'reference property must contain a "reference"')
-
-        if self.type == 'set':
-            if 'item' not in dict:
-                raise CerealPackException(file_path, err_in, 'set property must contain an "item"')
-            if 'max_items' not in dict:
-                raise CerealPackException(file_path, err_in, 'set property must contain a "max_items"')
-            if not is_int(dict['max_items']):
-                raise CerealPackException(file_path, err_in, 'set property must contain an integer "max_items"')
-            self.max_items = int(dict['max_items'])
-            if 'type' not in dict['item']:
-                raise CerealPackException(file_path, err_in, 'item of set property must contain a "type"')
-            if dict['item']['type'] not in property_types:
-                raise CerealPackException(file_path, err_in, 'unknown property type "{}"'.format(dict['item']['type']))
-            if dict['item']['type'] == 'set':
-                raise CerealPackException(file_path, err_in, 'item of set property cannot be of type "set"')
-            if dict['item']['type'] == 'reference' and 'reference' not in dict['item']['type']:
-                raise CerealPackException(file_path, err_in, 'reference property must contain a "reference"')
-            if dict['item']['type'] == 'const_length_buffer' and 'length' not in dict['item']['type']:
-                raise CerealPackException(file_path, err_in, 'const_length_buffer property must contain a "length"')
-            if dict['item']['type'] == 'dynamic_buffer' and 'max_length' not in dict['item']['type']:
-                raise CerealPackException(file_path, err_in, 'dynamic_buffer property must contain a "max_length"')
-            if dict['item']['type'] == 'string' and 'max_length' not in dict['item']['type']:
-                raise CerealPackException(file_path, err_in, 'string property must contain a "max_length"')
-
         if type(property_type['predefined_length']) == int:
             self.max_length = property_type['predefined_length']
         elif property_type['const_length']:
-            if 'length' not in dict:
-                raise CerealPackException(file_path, err_in, '{} property must contain a "length"'.format(self.type))
-            if not is_int(dict['length']):
-                raise CerealPackException(file_path, err_in, '{} property must contain an integer "length"'.format(self.type))
             self.max_length = int(dict['length'])
         elif property_type['variable_length']:
-            if 'max_length' not in dict:
-                raise CerealPackException(file_path, err_in, '{} property must contain a "max_length"'.format(self.type))
-            if not is_int(dict['max_length']):
-                raise CerealPackException(file_path, err_in, '{} property must contain an integer "max_length"'.format(self.type))
             self.max_length = int(dict['max_length']) + property_type['encoding_length']
-
-
-        if self.type == 'set' and dict['item']['type'] == 'reference':
-            self.reference = dict['item']['reference']
 
         if self.type == 'reference':
             self.reference = dict['reference']
 
-        if self.type == 'set' and self.reference is None:
-            item_type = property_types[dict['item']['type']]
-            if item_type['predefined_length']:
-                item_length = item_type['predefined_length']
-            elif item_type['const_length']:
-                item_length = dict['item']['length']
+        if self.type == 'set':
+            self.max_items = int(dict['max_items'])
+            if dict['item']['type'] == 'reference':
+                self.reference = dict['item']['reference']
             else:
-                item_length = dict['item']['max_length'] + item_type['encoding_length']
+                item_type = property_types[dict['item']['type']]
+                if item_type['predefined_length']:
+                    item_length = item_type['predefined_length']
+                elif item_type['const_length']:
+                    item_length = dict['item']['length']
+                else:
+                    item_length = dict['item']['max_length'] + item_type['encoding_length']
 
-            self.max_length = length_length + (self.max_items * item_length)
+                self.max_length = length_length + (self.max_items * item_length)
 
+        # ensure max length was set unless the property contains a reference
         if type(self.max_length) != int and self.reference is None:
             raise CerealPackException(file_path, err_in, 'unable to determine max length of property')
+
+    def validate_prop(self, err_pre, dict):
+        # type
+        if 'type' not in dict:
+            raise CerealPackException(self.file_path, err_pre, '"type" not defined')
+        if dict['type'] not in property_types:
+            raise CerealPackException(self.file_path, err_pre, 'unknown property type "{}"'.format(dict['type']))
+
+        type_to_validate = dict['type']
+        property_type = property_types[type_to_validate]
+
+        # reference
+        if type_to_validate == 'reference' and 'reference' not in dict:
+            raise CerealPackException(self.file_path, err_pre, 'reference property must contain a "reference"')
+
+        if type_to_validate == 'set':
+            # item
+            if 'item' not in dict:
+                raise CerealPackException(self.file_path, err_pre, 'set property must contain an "item"')
+
+            # max_items
+            if 'max_items' not in dict:
+                raise CerealPackException(self.file_path, err_pre, 'set property must contain a "max_items"')
+            if not is_int(dict['max_items']):
+                raise CerealPackException(self.file_path, err_pre, 'set property must contain an integer "max_items"')
+
+            # don't allow a set to contain a set
+            if 'type' in dict['item'] and dict['item']['type'] == 'set':
+                raise CerealPackException(self.file_path, err_pre, 'item of set property cannot be of type "set"')
+
+            # validate item
+            self.validate_prop(err_pre + ' in "item" definition:', dict['item'])
+
+        # length
+        if type(property_type['predefined_length']) != int and property_type['const_length']:
+            if 'length' not in dict:
+                raise CerealPackException(self.file_path, err_pre, '{} property must contain a "length"'.format(type_to_validate))
+            if not is_int(dict['length']):
+                raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "length"'.format(type_to_validate))
+
+        # max_length
+        if property_type['variable_length']:
+            if 'max_length' not in dict:
+                raise CerealPackException(self.file_path, err_pre, '{} property must contain a "max_length"'.format(type_to_validate))
+            if not is_int(dict['max_length']):
+                raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "max_length"'.format(type_to_validate))
 
     def __str__(self):
         return str(self.dict)
