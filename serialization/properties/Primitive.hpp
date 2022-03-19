@@ -2,10 +2,11 @@
 #define _CEREAL_PACK_PRIMITIVE_HPP_
 #include "Property.hpp"
 #include <type_traits>
+#include <cstring>
 
 namespace cereal_pack {
     template<class T>
-    class Primative : public Property {
+    class Primitive : public Property {
         static_assert(std::is_fundamental<T>::value, "Primative property must be a fundamental type");
         public:
             virtual void reset() override {
@@ -13,12 +14,12 @@ namespace cereal_pack {
             }
 
             virtual int serialize(void* buffer) const override {
-                memcpy(&m_value, buffer, sizeof(m_value));
+                memcpy(buffer, &m_value, sizeof(m_value));
                 return sizeof(T);
             };
 
             virtual int deserialize(const void* buffer) override {
-                memcpy(buffer, &m_value, sizeof(m_value));
+                memcpy(&m_value, buffer, sizeof(m_value));
                 return sizeof(T);
             };
 
@@ -33,7 +34,7 @@ namespace cereal_pack {
             void set(T val) { m_value = val; }
             T get() const { return m_value; }
         private:
-            T m_value;
+            T m_value = 0;
     };
 };
 

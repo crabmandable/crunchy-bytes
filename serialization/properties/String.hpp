@@ -7,7 +7,7 @@
 
 namespace cereal_pack {
     template<unsigned int max_string_length>
-    class DynamicLengthBuffer: public Property {
+    class String: public Property {
         public:
             virtual void reset() override {
                 m_value.clear();
@@ -62,7 +62,7 @@ namespace cereal_pack {
                 return true;
             }
 
-            std::string m_value;
+            std::string m_value = "";
     };
 };
 

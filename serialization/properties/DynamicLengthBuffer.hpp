@@ -48,7 +48,22 @@ namespace cereal_pack {
                 memcpy(data, m_value.data(), length);
             }
 
-            std::vector<uint8_t>& get() { return m_value; }
+            void set(const std::vector<uint8_t>& data) {
+                if (!length_is_valid(data.size())) {
+                    //TODO real error
+                    throw "Unable to set buffer, its too big";
+                }
+                m_value = data;
+            }
+
+            void set(std::vector<uint8_t>&& data) {
+                if (!length_is_valid(data.size())) {
+                    //TODO real error
+                    throw "Unable to set buffer, its too big";
+                }
+                m_value = data;
+            }
+
             const std::vector<uint8_t>& get() const { return m_value; }
 
         private:

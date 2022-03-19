@@ -47,8 +47,8 @@ namespace cereal_pack {
             }
 
             virtual unsigned int serial_length() const override {
-                int item_len = std::accumulate(m_value.begin(), m_value.end(), [](const auto& item) {
-                    return item.serial_length();
+                int item_len = std::accumulate(m_value.begin(), m_value.end(), 0, [](const auto& item, int accum) {
+                    return accum + item.serial_length();
                 });
                 return item_len + sizeof(uint32_t);
             }
