@@ -51,14 +51,14 @@ add_custom_command(
     COMMAND ${CEREAL_PACK_GENERATE_COMMAND}
     DEPENDS ${CEREAL_PACK_GENERATOR_CODE} ${CEREAL_PACK_SCHEMA_FILES}
     OUTPUT ${GENERATED_FILES}
-    COMMENT "Generating the messages"
+    COMMENT "Generating cereal_pack classes"
 )
 
 set(CEREAL_PACK_SOURCES "")
 file(GLOB_RECURSE CEREAL_PACK_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cereal_pack.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/serialization/*.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/serialization/*.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/serialization/*.hpp")
 
 
 add_library(cereal_pack_lib INTERFACE ${CEREAL_PACK_SOURCES} ${GENERATED_FILES})
+target_include_directories(cereal_pack_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CEREAL_PACK_OUTPUT_DIR})

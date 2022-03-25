@@ -1,6 +1,7 @@
 #ifndef _CEREAL_PACK_HPP_
 #define _CEREAL_PACK_HPP_
 
+#include <stdint.h>
 #include "serialization/Schema.hpp"
 #include "serialization/properties/Property.hpp"
 #include "serialization/properties/Primitive.hpp"

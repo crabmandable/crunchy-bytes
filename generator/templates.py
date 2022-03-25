@@ -3,7 +3,7 @@ header_template = """
 #define __$HEADERGUARD$__
 
 #include <vector>
-#include "cereal_pack/cereal_pack.hpp"
+#include "cereal_pack.hpp"
 
 $INCLUDES$
 

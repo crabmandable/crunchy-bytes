@@ -96,7 +96,7 @@ property_types = {
                 'const_length': False,
                 'predefined_length': False,
                 'variable_length': False,
-                'class': 'cereal_pack::Set<$CLASS$>'
+                'class': 'cereal_pack::Set<$CLASS$, $LENGTH$>'
                 },
 }
 

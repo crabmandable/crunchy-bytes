@@ -4,7 +4,6 @@
 #include <vector>
 #include "properties/Property.hpp"
 #include <stdint.h>
-#include <numeric>
 
 namespace cereal_pack {
     class Schema {
@@ -15,28 +14,32 @@ namespace cereal_pack {
                 }
             }
             int serialize(void* buffer) const {
-                const auto& props = properties();
-                return std::accumulate(props.begin(), props.end(), 0, [&buffer](int accum, const Property* prop) {
-                    return accum + prop->serialize(buffer);
-                });
+                unsigned int pos = 0;
+                for (auto* p : properties()) {
+                    pos += p->serialize((uint8_t*)buffer + pos);
+                }
+                return pos;
             }
             int deserialize(const void* buffer) {
-                const auto& props = properties();
-                return std::accumulate(props.begin(), props.end(), 0, [&buffer](int accum, Property* prop) {
-                    return accum + prop->deserialize(buffer);
-                });
+                unsigned int pos = 0;
+                for (auto* p : properties()) {
+                    pos += p->deserialize((uint8_t*)buffer + pos);
+                }
+                return pos;
             }
             unsigned int max_serial_length() const {
-                const auto& props = properties();
-                return std::accumulate(props.begin(), props.end(), 0, [](unsigned int accum, const Property* prop) {
-                    return accum + prop->max_serial_length();
-                });
+                unsigned int accum = 0;
+                for (auto* p : properties()) {
+                    accum += p->max_serial_length();
+                }
+                return accum;
             }
             unsigned int serial_length() const {
-                const auto& props = properties();
-                return std::accumulate(props.begin(), props.end(), 0, [](unsigned int accum, const Property* prop) {
-                    return accum + prop->serial_length();
-                });
+                unsigned int accum = 0;
+                for (auto* p : properties()) {
+                    accum += p->serial_length();
+                }
+                return accum;
             }
 
             unsigned int number_of_properties() const {

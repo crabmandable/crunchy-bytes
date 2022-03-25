@@ -8,8 +8,8 @@ class Schema;
 
 namespace cereal_pack {
     template <class T>
-    class Reference : Property {
-        static_assert(std::is_base_of<T, Schema>::value, "Reference must refer to a schema");
+    class Reference : public Property {
+        static_assert(std::is_base_of<Schema, T>::value, "Reference must refer to a schema");
 
         public:
             virtual void reset() override {

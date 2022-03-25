@@ -4,14 +4,13 @@
 #include "Property.hpp"
 #include <type_traits>
 #include <vector>
-#include <numeric>
 #include <stdint.h>
 #include <stddef.h>
 
 namespace cereal_pack {
     template<class T, size_t max_items>
     class Set : public Property {
-        static_assert(std::is_base_of<T, Property>::value, "Set property must be a set of other properties");
+        static_assert(std::is_base_of<Property, T>::value, "Set property must be a set of other properties");
 
         public:
             virtual void reset() override {
@@ -48,10 +47,11 @@ namespace cereal_pack {
             }
 
             virtual unsigned int serial_length() const override {
-                int item_len = std::accumulate(m_value.begin(), m_value.end(), 0, [](const auto& item, int accum) {
-                    return accum + item.serial_length();
-                });
-                return item_len + sizeof(uint32_t);
+                unsigned int accum = 0;
+                for (auto& item: m_value) {
+                    accum += item.serial_length();
+                }
+                return accum + sizeof(uint32_t);
             }
 
             void set(const std::vector<T>& data) {
