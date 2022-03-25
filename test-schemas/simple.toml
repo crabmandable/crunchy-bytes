@@ -1,4 +1,4 @@
-namespace = "cereal_pack::test"
+namespace = "cereal_pack_test::test"
 name = "SimpleTest"
 
 order = ['string', 'bool', 'uint8', 'dynamic_length_buffer']
@@ -12,28 +12,28 @@ order = ['string', 'bool', 'uint8', 'dynamic_length_buffer']
     type = "bool"
 
     [props.uint8]
-    type = "uint8"
+    type = "uint8_t"
 
     [props.int8]
-    type = "int8"
+    type = "int8_t"
 
     [props.uint16]
-    type = "uint16"
+    type = "uint16_t"
 
     [props.int16]
-    type = "int16"
+    type = "int16_t"
 
     [props.uint32]
-    type = "uint32"
+    type = "uint32_t"
 
     [props.int32]
-    type = "int32"
+    type = "int32_t"
 
     [props.uint64]
-    type = "uint64"
+    type = "uint64_t"
 
     [props.int64]
-    type = "int64"
+    type = "int64_t"
 
     [props.dynamic_length_buffer]
     type = "dynamic_length_buffer"
@@ -56,3 +56,8 @@ order = ['string', 'bool', 'uint8', 'dynamic_length_buffer']
     type = "set"
     max_items = 5
     item = { type = "reference", reference = "OneBool" }
+
+    [props.set_of_buffers]
+    type = "set"
+    max_items = 5
+    item = { type = "const_length_buffer", length = 24 }

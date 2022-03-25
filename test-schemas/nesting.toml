@@ -1,4 +1,4 @@
-namespace = "cereal_pack::test::nesting"
+namespace = "cereal_pack_test::test::nesting"
 name = "Nesting"
 
 [props]
@@ -8,7 +8,7 @@ name = "Nesting"
 
     [props.simple_ref]
     type = "reference"
-    reference = "cereal_pack::test::SimpleTest"
+    reference = "cereal_pack_test::test::SimpleTest"
 
     [props.set_of_bool]
     type = "set"
@@ -18,4 +18,4 @@ name = "Nesting"
     [props.set_of_simple]
     type = "set"
     max_items = 5
-    item = { type = "reference", reference = "cereal_pack::test::SimpleTest" }
+    item = { type = "reference", reference = "cereal_pack_test::test::SimpleTest" }

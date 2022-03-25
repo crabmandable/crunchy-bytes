@@ -1,12 +1,12 @@
-from errors import CerealPackException
 import re
-from property_types import property_types, length_length
+from .errors import CerealPackException
+from .property_types import property_types, length_length
 
 def is_int(val):
     return type(val) == int or (type(val) == str and val.isnumeric())
 
 class Prop:
-    def __init__(self, file_path, name, dict):
+    def __init__(self, file_path, name, dict, validate=True):
         self.file_path = file_path
         self.dict = dict
         self.name = name
@@ -16,10 +16,11 @@ class Prop:
 
         err_in = 'in property "{}":'.format(self.name)
 
-        if re.match('^\w+$', name) is None:
-            raise CerealPackException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
+        if validate:
+            if re.match('^\w+$', name) is None:
+                raise CerealPackException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
 
-        self.validate_prop(err_in, dict)
+            self.validate_prop(err_in, dict)
 
         self.type = dict['type']
         property_type = property_types[self.type]
@@ -48,6 +49,7 @@ class Prop:
                     item_length = dict['item']['max_length'] + item_type['encoding_length']
 
                 self.max_length = length_length + (self.max_items * item_length)
+                self.item_prop = Prop(self.file_path, "", dict['item'], validate=False)
 
         # ensure max length was set unless the property contains a reference
         if type(self.max_length) != int and self.reference is None:

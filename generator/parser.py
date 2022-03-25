@@ -1,8 +1,8 @@
 import toml
-import schema
+from . import schema
 import re
-from errors import CerealPackException
-from property_types import length_length
+from .errors import CerealPackException
+from .property_types import length_length
 
 def parse(file_path):
     raw = toml.load(file_path)
@@ -40,7 +40,7 @@ def parse(file_path):
 
     return schema.Schema(file_path, raw['name'], raw['props'], namespace, order)
 
-def load_schemas(*files):
+def load_schemas(files):
     schemas = {}
 
     for file in files:
@@ -87,7 +87,7 @@ def load_schemas(*files):
 
 if __name__ == '__main__':
     import sys
-    schemas = load_schemas(*sys.argv[1:])
+    schemas = load_schemas(sys.argv[1:])
 
     for _, s in schemas.items():
         print(s)

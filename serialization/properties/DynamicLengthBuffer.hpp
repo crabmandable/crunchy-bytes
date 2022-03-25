@@ -7,7 +7,7 @@
 #include <cstring>
 
 namespace cereal_pack {
-    template<unsigned int max_buffer_length>
+    template <size_t max_buffer_length>
     class DynamicLengthBuffer: public Property {
         public:
             virtual void reset() override {

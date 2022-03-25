@@ -6,11 +6,11 @@
 #include <cstring>
 
 namespace cereal_pack {
-    template<unsigned int max_string_length>
+    template <size_t max_string_length>
     class String: public Property {
         public:
             virtual void reset() override {
-                m_value.clear();
+                m_value = "";
             }
 
             virtual int serialize(void* buffer) const override {

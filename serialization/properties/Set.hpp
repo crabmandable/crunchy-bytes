@@ -9,9 +9,10 @@
 #include <stddef.h>
 
 namespace cereal_pack {
-    template<class T, unsigned int max_items>
+    template<class T, size_t max_items>
     class Set : public Property {
         static_assert(std::is_base_of<T, Property>::value, "Set property must be a set of other properties");
+
         public:
             virtual void reset() override {
                 m_value.clear();
