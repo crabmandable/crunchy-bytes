@@ -12,6 +12,11 @@ class $NAME$ : public cereal_pack::Schema {
     private:
         $PROPERTIES$
     public:
+        struct constants {
+            $CONSTANTS$
+            private:
+                constants();
+        };
         $NAME$() = default;
         $NAME$($NAME$ &&) = default;
 
@@ -43,16 +48,14 @@ $NAMESPACE_END$
 """
 
 getter_template = """
-        auto get_$NAME$() -> decltype(m_$NAME$)& {
+        auto $NAME$() -> decltype(m_$NAME$)& {
             return m_$NAME$;
         }
 
-        auto get_$NAME$() const -> const decltype(m_$NAME$)& {
+        auto $NAME$() const -> const decltype(m_$NAME$)& {
             return m_$NAME$;
         }
 """
 
-assignment_template = """
-            m_$NAME$ = rhs.m_$NAME$;
-"""
+assignment_template = 'm_$NAME$ = rhs.m_$NAME$;'
 

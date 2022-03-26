@@ -30,7 +30,6 @@ def header_file(schema):
             ordered_props[k] = item
 
     # property declerations
-    declare = ""
     def class_for_prop(prop):
         klass = property_types[prop.type]['class']
         length_const = None
@@ -55,18 +54,16 @@ def header_file(schema):
 
         return klass
 
+    declarations = []
     for prop in schema.props.values():
         klass = class_for_prop(prop)
+        declarations.append('{} m_{};'.format(klass, prop.name))
 
-        declare += """
-    $CLASS$ m_$NAME$;
-        """.replace("$CLASS$", klass).replace("$NAME$", prop.name)
-
-    template = template.replace("$PROPERTIES$", declare)
+    template = replace_placeholder(template, 'PROPERTIES', declarations)
 
     #prop ptrs
-    ptrs = ", ".join(map(lambda i: "&m_" + i.name, ordered_props.values()))
-    template = template.replace("$PROPERTY_PTRS$", ptrs)
+    ptrs = map(lambda i: '&m_{},'.format(i.name), ordered_props.values())
+    template = replace_placeholder(template, 'PROPERTY_PTRS', ptrs)
 
     # getters
     getters = ""
@@ -75,20 +72,37 @@ def header_file(schema):
     template = template.replace("$GETTERS$", getters)
 
     # assignment
-    assignements = ""
+    assignements = []
     for p in schema.props:
-        assignements += assignment_template.replace("$NAME$", p)
-    template = template.replace("$ASSIGNMENT$", assignements)
+        assignements.append(assignment_template.replace("$NAME$", p))
+    template = replace_placeholder(template, 'ASSIGNMENT', assignements)
 
-    #includes
-    to_include = [i.replace("::", "/") for i in schema.references]
-    includes = "\n".join(map(lambda i: "#include \"" + i + ".hpp\"", to_include))
-    template = template.replace("$INCLUDES$", includes)
+    # includes
+    to_include = ['#include "{}.hpp"'.format(i.replace("::", "/")) for i in schema.references]
+    template = replace_placeholder(template, 'INCLUDES', to_include)
 
+    # constants
+    constants = []
+    for p in schema.props.values():
+        if p.type == 'set':
+            constants.append('static constexpr size_t {}_max_items = {};'.format(p.name, p.max_items))
+            if p.item_prop and p.item_prop.length_constant:
+                constants.append('static constexpr size_t {}_item_max_length = {};'.format(p.name, p.item_prop.length_constant))
+        elif p.length_constant:
+            constants.append('static constexpr size_t {}_max_length = {};'.format(p.name, p.length_constant))
 
+    constants.append('static constexpr size_t max_serial_length = {};'.format(schema.max_length()))
+    template = replace_placeholder(template, 'CONSTANTS', constants)
+
+    # remove empty lines
     template = re.compile("\s*\n\s*\n").sub("\n", template)
+
     return template
 
+def replace_placeholder(template, placeholder, lines):
+    line = re.search('^\s*\${}\$'.format(placeholder), template, re.MULTILINE).group(0)
+    indent = re.search('\s*\$', line).group(0)[:-1]
+    return template.replace('${}$'.format(placeholder), '\n{}'.format(indent).join(lines))
 
 if __name__ == '__main__':
     if not sys.argv[1:]:

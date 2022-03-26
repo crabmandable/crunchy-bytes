@@ -13,6 +13,8 @@ class Prop:
         self.reference = None
         self.max_length = None
         self.max_items = None
+        self.item_prop = None
+        self.length_constant = None
 
         err_in = 'in property "{}":'.format(self.name)
 
@@ -29,8 +31,10 @@ class Prop:
             self.max_length = property_type['predefined_length']
         elif property_type['const_length']:
             self.max_length = int(dict['length'])
+            self.length_constant = int(dict['length'])
         elif property_type['variable_length']:
             self.max_length = int(dict['max_length']) + property_type['encoding_length']
+            self.length_constant = int(dict['max_length'])
 
         if self.type == 'reference':
             self.reference = dict['reference']
