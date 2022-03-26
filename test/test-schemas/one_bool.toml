@@ -1,5 +1,5 @@
 name = "OneBool"
 
 [props]
-    [props.bool]
+    [props.boolean]
     type = "bool"

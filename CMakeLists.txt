@@ -60,5 +60,5 @@ file(GLOB_RECURSE CEREAL_PACK_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/serialization/*.hpp")
 
 
-add_library(cereal_pack_lib INTERFACE ${CEREAL_PACK_SOURCES} ${GENERATED_FILES})
-target_include_directories(cereal_pack_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CEREAL_PACK_OUTPUT_DIR})
+add_library(cereal_pack_interface INTERFACE ${CEREAL_PACK_SOURCES} ${GENERATED_FILES})
+target_include_directories(cereal_pack_interface INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CEREAL_PACK_OUTPUT_DIR})
