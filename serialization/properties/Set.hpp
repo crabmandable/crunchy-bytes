@@ -103,6 +103,14 @@ namespace cereal_pack {
             T& operator[](size_t pos) {
                 return m_value[pos];
             }
+
+            void resize(size_t length) {
+                if (!number_of_items_is_valid(length)) {
+                    //TODO real error
+                    throw "Unable to resize set, it exceeds max length";
+                }
+                m_value.resize(length);
+            }
         private:
             bool number_of_items_is_valid(unsigned int items) const {
                 if (items > max_items) {
@@ -112,11 +120,6 @@ namespace cereal_pack {
                     return false;
                 }
                 return true;
-            }
-            void resize(unsigned int length) {
-                if (length != m_value.size()) {
-                    m_value.resize(length);
-                }
             }
             std::vector<T> m_value {0};
     };

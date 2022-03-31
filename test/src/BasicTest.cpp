@@ -231,7 +231,7 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     EXPECT_TRUE(s.set_of_references()[2].get().boolean());
 
     s.set_of_references().reset();
-    EXPECT_EQ(0, s.set_of_references().get().size());
+    ASSERT_EQ(0, s.set_of_references().get().size());
 
     cereal_pack::Reference<OneBool> b;
     b.get().boolean().set(false);
@@ -246,6 +246,19 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     s.set_of_references().emplace_back(b3);
 
     EXPECT_EQ(3, s.set_of_references().get().size());
+    EXPECT_FALSE(s.set_of_references()[0].get().boolean());
+    EXPECT_TRUE(s.set_of_references()[1].get().boolean());
+    EXPECT_TRUE(s.set_of_references()[2].get().boolean());
+
+    s.set_of_references().reset();
+    ASSERT_EQ(0, s.set_of_references().get().size());
+
+    s.set_of_references().resize(3);
+    ASSERT_EQ(3, s.set_of_references().get().size());
+
+    s.set_of_references()[0].get().boolean().set(false);
+    s.set_of_references()[1].get().boolean().set(true);
+    s.set_of_references()[2].get().boolean().set(true);
     EXPECT_FALSE(s.set_of_references()[0].get().boolean());
     EXPECT_TRUE(s.set_of_references()[1].get().boolean());
     EXPECT_TRUE(s.set_of_references()[2].get().boolean());
