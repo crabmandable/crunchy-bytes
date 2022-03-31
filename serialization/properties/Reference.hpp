@@ -12,6 +12,10 @@ namespace cereal_pack {
         static_assert(std::is_base_of<Schema, T>::value, "Reference must refer to a schema");
 
         public:
+            Reference() = default;
+            Reference(const T& v) : m_value{v} {}
+            operator T() const { return m_value; }
+
             virtual void reset() override {
                 m_value.reset();
             }
@@ -34,6 +38,9 @@ namespace cereal_pack {
                 m_value = value;
             }
             const T& get() const {
+                return m_value;
+            }
+            T& get() {
                 return m_value;
             }
         private:

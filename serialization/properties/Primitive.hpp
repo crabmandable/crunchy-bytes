@@ -9,6 +9,10 @@ namespace cereal_pack {
     class Primitive : public Property {
         static_assert(std::is_fundamental<T>::value, "Primative property must be a fundamental type");
         public:
+            Primitive() = default;
+            Primitive(const T& v) : m_value{v} {}
+            operator T() const { return m_value; }
+
             virtual void reset() override {
                 m_value = (T)0;
             }

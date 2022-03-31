@@ -62,6 +62,18 @@ namespace cereal_pack {
                 m_value = data;
             }
 
+            template <typename ContainerOfT>
+            void set(const ContainerOfT& data) {
+                static_assert(std::is_convertible<typename ContainerOfT::value_type, T>::value,
+                  "Expected `ContainerOfT` to be convertible to a container of `T`");
+
+                if (!number_of_items_is_valid(data.size())) {
+                    //TODO real err
+                    throw "Unable to set Set, too many items";
+                }
+                m_value = {data.begin(), data.end()};
+            }
+
             template <typename... Args>
             auto push_back(Args&&... args) {
                 if (!number_of_items_is_valid(1 + m_value.size())) {
@@ -80,8 +92,16 @@ namespace cereal_pack {
                 return m_value.emplace_back(std::forward<Args>(args)...);
             }
 
-            const std::vector<T>& get(const std::vector<T>& data) const {
+            const std::vector<T>& get() const {
                 return m_value;
+            }
+
+            const T& operator[](size_t pos) const {
+                return m_value[pos];
+            }
+
+            T& operator[](size_t pos) {
+                return m_value[pos];
             }
         private:
             bool number_of_items_is_valid(unsigned int items) const {
