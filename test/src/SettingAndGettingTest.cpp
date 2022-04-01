@@ -4,7 +4,7 @@
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
 
-class BasicTest : public ::testing::Test {
+class SettingAndGettingTest : public ::testing::Test {
 protected:
     void SetUp() override {
     }
@@ -13,13 +13,13 @@ protected:
     }
 };
 
-TEST_F(BasicTest, CanConstructGeneratedClasses) {
+TEST_F(SettingAndGettingTest, CanConstructGeneratedClasses) {
     cereal_pack_test::test::SimpleTest s;
     OneBool b;
     cereal_pack_test::test::nesting::Nesting n;
 }
 
-TEST_F(BasicTest, MaxLengthsMatch) {
+TEST_F(SettingAndGettingTest, MaxLengthsMatch) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
 
@@ -29,7 +29,7 @@ TEST_F(BasicTest, MaxLengthsMatch) {
     EXPECT_EQ(n.max_serial_length(), nesting::Nesting::constants::max_serial_length);
 }
 
-TEST_F(BasicTest, CanSetBool) {
+TEST_F(SettingAndGettingTest, CanSetBool) {
     cereal_pack_test::test::SimpleTest s;
     s.boolean().set(false);
     EXPECT_FALSE(s.boolean().get());
@@ -37,7 +37,7 @@ TEST_F(BasicTest, CanSetBool) {
     EXPECT_TRUE(s.boolean().get());
 }
 
-TEST_F(BasicTest, CanSetString) {
+TEST_F(SettingAndGettingTest, CanSetString) {
     cereal_pack_test::test::SimpleTest s;
     s.string().set("Wow it's a string");
     EXPECT_EQ(s.string().get(), "Wow it's a string");
@@ -45,7 +45,7 @@ TEST_F(BasicTest, CanSetString) {
     EXPECT_EQ(s.string().get(), "Wow it's still a string");
 }
 
-TEST_F(BasicTest, CanSetUint8) {
+TEST_F(SettingAndGettingTest, CanSetUint8) {
     cereal_pack_test::test::SimpleTest s;
     s.uint8().set(32);
     EXPECT_EQ(s.uint8().get(), 32);
@@ -53,7 +53,7 @@ TEST_F(BasicTest, CanSetUint8) {
     EXPECT_EQ(s.uint8().get(), 251);
 }
 
-TEST_F(BasicTest, CanSetInt8) {
+TEST_F(SettingAndGettingTest, CanSetInt8) {
     cereal_pack_test::test::SimpleTest s;
     s.int8().set(32);
     EXPECT_EQ(s.int8().get(), 32);
@@ -61,7 +61,7 @@ TEST_F(BasicTest, CanSetInt8) {
     EXPECT_EQ(s.int8().get(), -4);
 }
 
-TEST_F(BasicTest, CanSetUint16) {
+TEST_F(SettingAndGettingTest, CanSetUint16) {
     cereal_pack_test::test::SimpleTest s;
     s.uint16().set(1450);
     EXPECT_EQ(s.uint16().get(), 1450);
@@ -69,7 +69,7 @@ TEST_F(BasicTest, CanSetUint16) {
     EXPECT_EQ(s.uint16().get(), 251);
 }
 
-TEST_F(BasicTest, CanSetInt16) {
+TEST_F(SettingAndGettingTest, CanSetInt16) {
     cereal_pack_test::test::SimpleTest s;
     s.int16().set(1450);
     EXPECT_EQ(s.int16().get(), 1450);
@@ -77,7 +77,7 @@ TEST_F(BasicTest, CanSetInt16) {
     EXPECT_EQ(s.int16().get(), -4);
 }
 
-TEST_F(BasicTest, CanSetUint32) {
+TEST_F(SettingAndGettingTest, CanSetUint32) {
     cereal_pack_test::test::SimpleTest s;
     s.uint32().set(242424242);
     EXPECT_EQ(s.uint32().get(), 242424242);
@@ -85,7 +85,7 @@ TEST_F(BasicTest, CanSetUint32) {
     EXPECT_EQ(s.uint32().get(), 251);
 }
 
-TEST_F(BasicTest, CanSetInt32) {
+TEST_F(SettingAndGettingTest, CanSetInt32) {
     cereal_pack_test::test::SimpleTest s;
     s.int32().set(242424242);
     EXPECT_EQ(s.int32().get(), 242424242);
@@ -94,7 +94,7 @@ TEST_F(BasicTest, CanSetInt32) {
 }
 
 
-TEST_F(BasicTest, CanSetUint64) {
+TEST_F(SettingAndGettingTest, CanSetUint64) {
     cereal_pack_test::test::SimpleTest s;
     s.uint64().set(32);
     EXPECT_EQ(s.uint64().get(), 32);
@@ -102,7 +102,7 @@ TEST_F(BasicTest, CanSetUint64) {
     EXPECT_EQ(s.uint64().get(), 324425555225252252);
 }
 
-TEST_F(BasicTest, CanSetInt64) {
+TEST_F(SettingAndGettingTest, CanSetInt64) {
     cereal_pack_test::test::SimpleTest s;
     s.int64().set(324425555225252252);
     EXPECT_EQ(s.int64().get(), 324425555225252252);
@@ -110,7 +110,7 @@ TEST_F(BasicTest, CanSetInt64) {
     EXPECT_EQ(s.int64().get(), -4);
 }
 
-TEST_F(BasicTest, CanSetConstLengthBuffer) {
+TEST_F(SettingAndGettingTest, CanSetConstLengthBuffer) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
 
@@ -135,7 +135,7 @@ TEST_F(BasicTest, CanSetConstLengthBuffer) {
     EXPECT_EQ(0, memcmp(s.const_length_buffer().get(), buff2.data(), SimpleTest::constants::const_length_buffer_max_length));
 }
 
-TEST_F(BasicTest, CanSetDynamicLengthBuffer) {
+TEST_F(SettingAndGettingTest, CanSetDynamicLengthBuffer) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
 
@@ -171,7 +171,7 @@ TEST_F(BasicTest, CanSetDynamicLengthBuffer) {
     EXPECT_EQ(0, memcmp(s.dynamic_length_buffer().get().data(), buff2.data(), s.dynamic_length_buffer().get().size()));
 }
 
-TEST_F(BasicTest, CanSetReference) {
+TEST_F(SettingAndGettingTest, CanSetReference) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
     OneBool b;
@@ -184,7 +184,7 @@ TEST_F(BasicTest, CanSetReference) {
     EXPECT_FALSE(s.reference().get().boolean().get());
 }
 
-TEST_F(BasicTest, CanSetSetOfPrimitives) {
+TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
     s.set_of_bools().set({false, true, true});
@@ -228,7 +228,7 @@ TEST_F(BasicTest, CanSetSetOfPrimitives) {
     EXPECT_FALSE(s.set_of_bools()[2]);
 }
 
-TEST_F(BasicTest, CanSetSetOfReferences) {
+TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
 
@@ -290,7 +290,7 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     EXPECT_TRUE(s.set_of_references()[2].boolean());
 }
 
-TEST_F(BasicTest, CanSetSetOfBuffers) {
+TEST_F(SettingAndGettingTest, CanSetSetOfBuffers) {
     using namespace cereal_pack_test::test;
     SimpleTest s;
 
