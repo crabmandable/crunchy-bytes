@@ -4,12 +4,33 @@
 #include "Property.hpp"
 #include <stdint.h>
 #include <vector>
+#include <array>
 #include <cstring>
 
 namespace cereal_pack {
     template <size_t max_buffer_length>
     class DynamicLengthBuffer: public Property {
         public:
+            DynamicLengthBuffer() = default;
+
+            template < template < class ... > class Container, class ... Args >
+            DynamicLengthBuffer(const Container<uint8_t, Args...>& data) {
+                if (!length_is_valid(data.size())) {
+                    throw "Unable to construct buffer, too big";
+                }
+                m_value.resize(max_buffer_length);
+                std::fill(m_value.begin(), m_value.end(), 0);
+                memcpy(m_value.data(), data.data(), data.size());
+            }
+
+            template <size_t len>
+            DynamicLengthBuffer(const std::array<uint8_t, len>& data) {
+                static_assert(len <= max_buffer_length, "Length must fit within the predefined buffer size");
+                m_value.resize(len);
+                std::fill(m_value.begin(), m_value.end(), 0);
+                memcpy(m_value.data(), data.data(), data.size());
+            }
+
             virtual void reset() override {
                 m_value.clear();
             }
@@ -48,12 +69,8 @@ namespace cereal_pack {
                 memcpy(data, m_value.data(), length);
             }
 
-            void set(const std::vector<uint8_t>& data) {
-                if (!length_is_valid(data.size())) {
-                    //TODO real error
-                    throw "Unable to set buffer, its too big";
-                }
-                m_value = data;
+            void set(const DynamicLengthBuffer<max_buffer_length>& other) {
+                *this = other;
             }
 
             void set(std::vector<uint8_t>&& data) {
@@ -84,7 +101,7 @@ namespace cereal_pack {
                     m_value.resize(length);
                 }
             }
-            std::vector<uint8_t> m_value {0};
+            std::vector<uint8_t> m_value;
     };
 };
 

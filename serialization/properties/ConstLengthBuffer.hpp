@@ -16,7 +16,6 @@ namespace cereal_pack {
                 std::fill(m_value.begin(), m_value.end(), 0);
             }
 
-
             template < template < class ... > class Container, class ... Args >
             ConstLengthBuffer(const Container<uint8_t, Args...>& data) {
                 if (data.size() > length) {
@@ -74,7 +73,7 @@ namespace cereal_pack {
 
             const uint8_t* get() const { return m_value.data(); }
 
-            size_t size() {
+            constexpr size_t size() {
                 return length;
             }
 

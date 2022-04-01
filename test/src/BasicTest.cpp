@@ -152,6 +152,23 @@ TEST_F(BasicTest, CanSetDynamicLengthBuffer) {
     s.dynamic_length_buffer().set(buff.data(), buff.size());
     EXPECT_EQ(s.dynamic_length_buffer().get().size(), buff.size());
     EXPECT_EQ(0, memcmp(s.dynamic_length_buffer().get().data(), buff.data(), s.dynamic_length_buffer().get().size()));
+
+    s.dynamic_length_buffer().reset();
+    EXPECT_EQ(0, s.dynamic_length_buffer().size());
+
+    std::fill(buff.begin(), buff.end(), 0xAB);
+    s.dynamic_length_buffer().set(buff);
+    EXPECT_EQ(s.dynamic_length_buffer().get().size(), buff.size());
+    EXPECT_EQ(0, memcmp(s.dynamic_length_buffer().get().data(), buff.data(), s.dynamic_length_buffer().get().size()));
+
+    s.dynamic_length_buffer().reset();
+    EXPECT_EQ(0, s.dynamic_length_buffer().size());
+
+    std::array<uint8_t, 5> buff2;
+    std::fill(buff2.begin(), buff2.end(), 0xCC);
+    s.dynamic_length_buffer().set(buff2);
+    EXPECT_EQ(s.dynamic_length_buffer().get().size(), buff2.size());
+    EXPECT_EQ(0, memcmp(s.dynamic_length_buffer().get().data(), buff2.data(), s.dynamic_length_buffer().get().size()));
 }
 
 TEST_F(BasicTest, CanSetReference) {
