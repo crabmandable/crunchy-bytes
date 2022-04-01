@@ -288,6 +288,20 @@ TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
     EXPECT_FALSE(s.set_of_references()[0].boolean());
     EXPECT_TRUE(s.set_of_references()[1].boolean());
     EXPECT_TRUE(s.set_of_references()[2].boolean());
+
+    s.set_of_references().reset();
+    ASSERT_EQ(0, s.set_of_references().size());
+
+    OneBool oneBool;
+    oneBool.boolean().set(true);
+    s.set_of_references().resize(1);
+    s.set_of_references()[0] = oneBool;
+    EXPECT_TRUE(s.set_of_references()[0].boolean());
+
+    cereal_pack::Reference<OneBool> oneBool2;
+    oneBool2.get().boolean().set(false);
+    s.set_of_references()[0] = oneBool2;
+    EXPECT_FALSE(s.set_of_references()[0].boolean());
 }
 
 TEST_F(SettingAndGettingTest, CanSetSetOfBuffers) {
