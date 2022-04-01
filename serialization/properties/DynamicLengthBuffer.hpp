@@ -66,6 +66,9 @@ namespace cereal_pack {
 
             const std::vector<uint8_t>& get() const { return m_value; }
 
+            auto size() const -> typename std::vector<uint8_t>::size_type {
+                return m_value.size();
+            }
         private:
             bool length_is_valid(unsigned int length) const {
                 if (length > max_buffer_length) {

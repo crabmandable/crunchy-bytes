@@ -8,11 +8,15 @@
 #include <stddef.h>
 
 namespace cereal_pack {
+    template<typename T> class Reference;
+
     template<class T, size_t max_items>
     class Set : public Property {
         static_assert(std::is_base_of<Property, T>::value, "Set property must be a set of other properties");
 
         public:
+            Set() = default;
+
             virtual void reset() override {
                 m_value.clear();
             }
@@ -62,10 +66,10 @@ namespace cereal_pack {
                 m_value = data;
             }
 
-            template <typename ContainerOfT>
-            void set(const ContainerOfT& data) {
-                static_assert(std::is_convertible<typename ContainerOfT::value_type, T>::value,
-                  "Expected `ContainerOfT` to be convertible to a container of `T`");
+            template <typename A, template < class ... > class Container, class ... Args >
+            void set(const Container<A, Args...>& data) {
+                static_assert(std::is_convertible<typename Container<A, Args...>::value_type, T>::value,
+                  "Expected `Container` to contain elements convertible to `T`");
 
                 if (!number_of_items_is_valid(data.size())) {
                     //TODO real err
@@ -96,12 +100,20 @@ namespace cereal_pack {
                 return m_value;
             }
 
-            const T& operator[](size_t pos) const {
-                return m_value[pos];
+            const auto& operator[](size_t pos) const {
+                if constexpr (is_templated_from<T, Reference>::value) {
+                    return m_value[pos].get();
+                } else {
+                    return m_value[pos];
+                }
             }
 
-            T& operator[](size_t pos) {
-                return m_value[pos];
+            auto& operator[](size_t pos) {
+                if constexpr (is_templated_from<T, Reference>::value) {
+                    return m_value[pos].get();
+                } else {
+                    return m_value[pos];
+                }
             }
 
             void resize(size_t length) {
@@ -111,7 +123,16 @@ namespace cereal_pack {
                 }
                 m_value.resize(length);
             }
+
+            auto size() const -> typename std::vector<T>::size_type {
+                return m_value.size();
+            }
         private:
+            template <class, template <class> class>
+                struct is_templated_from : public std::false_type {};
+            template <class A, template <class> class U>
+                struct is_templated_from<U<A>, U> : public std::true_type {};
+
             bool number_of_items_is_valid(unsigned int items) const {
                 if (items > max_items) {
                     return false;
@@ -121,7 +142,7 @@ namespace cereal_pack {
                 }
                 return true;
             }
-            std::vector<T> m_value {0};
+            std::vector<T> m_value;
     };
 }
 #endif //_CEREAL_PACK_SET_HPP_

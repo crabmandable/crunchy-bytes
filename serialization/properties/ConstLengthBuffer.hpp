@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <cstring>
 #include <vector>
+#include <array>
 
 namespace cereal_pack {
     template <size_t length>
@@ -13,6 +14,30 @@ namespace cereal_pack {
             ConstLengthBuffer() {
                 m_value.resize(length);
                 std::fill(m_value.begin(), m_value.end(), 0);
+            }
+
+
+            template < template < class ... > class Container, class ... Args >
+            ConstLengthBuffer(const Container<uint8_t, Args...>& data) {
+                if (data.size() > length) {
+                    throw "Unable to construct buffer, too big";
+                }
+                m_value.resize(length);
+                std::fill(m_value.begin(), m_value.end(), 0);
+                memcpy(m_value.data(), data.data(), data.size());
+            }
+
+            template <size_t len>
+            ConstLengthBuffer(const std::array<uint8_t, len>& data) {
+                static_assert(len <= length, "Length must fit within the predefined buffer size");
+                m_value.resize(length);
+                std::fill(m_value.begin(), m_value.end(), 0);
+                memcpy(m_value.data(), data.data(), data.size());
+            }
+
+            ConstLengthBuffer(const uint8_t* data) {
+                m_value.resize(length);
+                memcpy(m_value.data(), data, length);
             }
 
             virtual void reset() override {
@@ -37,12 +62,21 @@ namespace cereal_pack {
                 return length;
             }
 
-            void set(uint8_t* data) {
-                memcpy(data, m_value.data(), length);
+            void set(const uint8_t* data) {
+                memcpy(m_value.data(), data, length);
+            }
+
+            void set(const ConstLengthBuffer<length>& other) {
+                *this = other;
             }
 
             uint8_t* get() { return m_value.data(); }
+
             const uint8_t* get() const { return m_value.data(); }
+
+            size_t size() {
+                return length;
+            }
 
         private:
             std::vector<uint8_t> m_value;

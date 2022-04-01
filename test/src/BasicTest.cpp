@@ -124,6 +124,15 @@ TEST_F(BasicTest, CanSetConstLengthBuffer) {
     std::fill(buff.begin(), buff.end(), 0xBA);
     s.const_length_buffer().set(buff.data());
     EXPECT_EQ(0, memcmp(s.const_length_buffer().get(), buff.data(), SimpleTest::constants::const_length_buffer_max_length));
+
+    std::fill(buff.begin(), buff.end(), 0xDE);
+    s.const_length_buffer().set(buff);
+    EXPECT_EQ(0, memcmp(s.const_length_buffer().get(), buff.data(), SimpleTest::constants::const_length_buffer_max_length));
+
+    std::array<uint8_t, SimpleTest::constants::const_length_buffer_max_length> buff2;
+    memset(buff2.data(), 0xEF, buff2.size());
+    s.const_length_buffer().set(buff2);
+    EXPECT_EQ(0, memcmp(s.const_length_buffer().get(), buff2.data(), SimpleTest::constants::const_length_buffer_max_length));
 }
 
 TEST_F(BasicTest, CanSetDynamicLengthBuffer) {
@@ -174,7 +183,7 @@ TEST_F(BasicTest, CanSetSetOfPrimitives) {
     EXPECT_FALSE(s.set_of_bools()[2]);;
 
     s.set_of_bools().reset();
-    ASSERT_EQ(0, s.set_of_bools().get().size());
+    ASSERT_EQ(0, s.set_of_bools().size());
 
     s.set_of_bools().push_back(true);
     cereal_pack::Primitive<bool> b;
@@ -182,13 +191,13 @@ TEST_F(BasicTest, CanSetSetOfPrimitives) {
     s.set_of_bools().push_back(b);
     s.set_of_bools().push_back(false);
 
-    EXPECT_EQ(3, s.set_of_bools().get().size());
+    EXPECT_EQ(3, s.set_of_bools().size());
     EXPECT_TRUE(s.set_of_bools()[0]);
     EXPECT_FALSE(s.set_of_bools()[1]);
     EXPECT_FALSE(s.set_of_bools()[2]);
 
     s.set_of_bools().reset();
-    ASSERT_EQ(0, s.set_of_bools().get().size());
+    ASSERT_EQ(0, s.set_of_bools().size());
 
     s.set_of_bools().emplace_back(true);
     cereal_pack::Primitive<bool> b2;
@@ -196,7 +205,7 @@ TEST_F(BasicTest, CanSetSetOfPrimitives) {
     s.set_of_bools().emplace_back(b2);
     s.set_of_bools().emplace_back(false);
 
-    EXPECT_EQ(3, s.set_of_bools().get().size());
+    EXPECT_EQ(3, s.set_of_bools().size());
     EXPECT_TRUE(s.set_of_bools()[0]);
     EXPECT_FALSE(s.set_of_bools()[1]);
     EXPECT_FALSE(s.set_of_bools()[2]);
@@ -214,9 +223,9 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     s.set_of_references().set(refs);
 
     EXPECT_EQ(3, s.set_of_references().get().size());
-    EXPECT_TRUE(s.set_of_references()[0].get().boolean());
-    EXPECT_FALSE(s.set_of_references()[1].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[2].get().boolean());
+    EXPECT_TRUE(s.set_of_references()[0].boolean());
+    EXPECT_FALSE(s.set_of_references()[1].boolean());
+    EXPECT_TRUE(s.set_of_references()[2].boolean());
 
     std::vector<cereal_pack::Reference<OneBool>> refs2;
     refs2.resize(3);
@@ -225,13 +234,13 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     refs2[2].get().boolean().set(true);
     s.set_of_references().set(refs2);
 
-    EXPECT_EQ(3, s.set_of_references().get().size());
-    EXPECT_TRUE(s.set_of_references()[0].get().boolean());
-    EXPECT_FALSE(s.set_of_references()[1].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[2].get().boolean());
+    EXPECT_EQ(3, s.set_of_references().size());
+    EXPECT_TRUE(s.set_of_references()[0].boolean());
+    EXPECT_FALSE(s.set_of_references()[1].boolean());
+    EXPECT_TRUE(s.set_of_references()[2].boolean());
 
     s.set_of_references().reset();
-    ASSERT_EQ(0, s.set_of_references().get().size());
+    ASSERT_EQ(0, s.set_of_references().size());
 
     cereal_pack::Reference<OneBool> b;
     b.get().boolean().set(false);
@@ -245,21 +254,113 @@ TEST_F(BasicTest, CanSetSetOfReferences) {
     b3.boolean().set(true);
     s.set_of_references().emplace_back(b3);
 
-    EXPECT_EQ(3, s.set_of_references().get().size());
-    EXPECT_FALSE(s.set_of_references()[0].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[1].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[2].get().boolean());
+    EXPECT_EQ(3, s.set_of_references().size());
+    EXPECT_FALSE(s.set_of_references()[0].boolean());
+    EXPECT_TRUE(s.set_of_references()[1].boolean());
+    EXPECT_TRUE(s.set_of_references()[2].boolean());
 
     s.set_of_references().reset();
-    ASSERT_EQ(0, s.set_of_references().get().size());
+    ASSERT_EQ(0, s.set_of_references().size());
 
     s.set_of_references().resize(3);
-    ASSERT_EQ(3, s.set_of_references().get().size());
+    ASSERT_EQ(3, s.set_of_references().size());
 
-    s.set_of_references()[0].get().boolean().set(false);
-    s.set_of_references()[1].get().boolean().set(true);
-    s.set_of_references()[2].get().boolean().set(true);
-    EXPECT_FALSE(s.set_of_references()[0].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[1].get().boolean());
-    EXPECT_TRUE(s.set_of_references()[2].get().boolean());
+    s.set_of_references()[0].boolean().set(false);
+    s.set_of_references()[1].boolean().set(true);
+    s.set_of_references()[2].boolean().set(true);
+    EXPECT_FALSE(s.set_of_references()[0].boolean());
+    EXPECT_TRUE(s.set_of_references()[1].boolean());
+    EXPECT_TRUE(s.set_of_references()[2].boolean());
+}
+
+TEST_F(BasicTest, CanSetSetOfBuffers) {
+    using namespace cereal_pack_test::test;
+    SimpleTest s;
+
+    constexpr auto buffLen = SimpleTest::constants::set_of_buffers_item_max_length;
+    std::vector<cereal_pack::ConstLengthBuffer<buffLen>> buffs;
+
+    buffs.resize(3);
+    memset(buffs[0].get(), 0xFF, buffLen);
+    memset(buffs[1].get(), 0xEE, buffLen);
+    memset(buffs[2].get(), 0xDD, buffLen);
+    s.set_of_buffers().set(buffs);
+
+    ASSERT_EQ(3, s.set_of_buffers().get().size());
+    EXPECT_EQ(s.set_of_buffers()[0].size(), buffLen);
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), buffs[0].get(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), buffs[1].get(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[2].get(), buffs[2].get(), buffLen));
+
+
+    s.set_of_buffers().reset();
+    ASSERT_EQ(0, s.set_of_buffers().size());
+
+    std::vector<std::array<uint8_t, buffLen>> buffs2;
+    buffs2.resize(3);
+    memset(buffs2[0].data(), 0x0F, buffLen);
+    memset(buffs2[1].data(), 0x4E, buffLen);
+    memset(buffs2[2].data(), 0x8D, buffLen);
+    s.set_of_buffers().set(buffs2);
+
+    ASSERT_EQ(3, s.set_of_buffers().get().size());
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), buffs2[0].data(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), buffs2[1].data(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[2].get(), buffs2[2].data(), buffLen));
+
+    std::vector<std::array<uint8_t, buffLen - 3>> buffs3;
+    buffs3.resize(3);
+    memset(buffs3[0].data(), 0x7F, buffLen - 3);
+    memset(buffs3[1].data(), 0x3E, buffLen - 3);
+    memset(buffs3[2].data(), 0x4D, buffLen - 3);
+    s.set_of_buffers().set(buffs3);
+
+    ASSERT_EQ(3, s.set_of_buffers().get().size());
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), buffs3[0].data(), buffLen - 3));
+
+    EXPECT_EQ(0, *(s.set_of_buffers()[0].get() + buffLen - 3));
+    EXPECT_EQ(0, *(s.set_of_buffers()[0].get() + buffLen - 2));
+    EXPECT_EQ(0, *(s.set_of_buffers()[0].get() + buffLen - 1));
+
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), buffs3[1].data(), buffLen - 3));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[2].get(), buffs3[2].data(), buffLen - 3));
+
+    s.set_of_buffers().reset();
+    ASSERT_EQ(0, s.set_of_buffers().size());
+
+    std::array<uint8_t, buffLen> b;
+    memset(b.data(), 0x88, buffLen);
+    s.set_of_buffers().push_back(b);
+
+    std::array<uint8_t, buffLen> b2;
+    memset(b2.data(), 0x99, buffLen);
+    s.set_of_buffers().push_back(b2.data());
+
+    std::array<uint8_t, buffLen> b3;
+    std::array<uint8_t, buffLen> b3_copy;
+    memset(b3.data(), 0x77, buffLen);
+    memset(b3_copy.data(), 0x77, buffLen);
+    s.set_of_buffers().emplace_back(b3);
+
+    EXPECT_EQ(3, s.set_of_buffers().size());
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), b.data(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), b2.data(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[2].get(), b3_copy.data(), buffLen));
+
+    s.set_of_buffers().reset();
+    ASSERT_EQ(0, s.set_of_buffers().size());
+
+    s.set_of_buffers().resize(3);
+    ASSERT_EQ(3, s.set_of_buffers().size());
+
+
+    std::array<uint8_t, buffLen> buff;
+    memset(buff.data(), 0x88, buffLen);
+    s.set_of_buffers()[0].set(buff);
+
+    std::array<uint8_t, buffLen> buff2;
+    memset(buff2.data(), 0x78, buffLen);
+    memset(s.set_of_buffers()[1].get(), 0x78, buffLen);
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), buff.data(), buffLen));
+    EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), buff2.data(), buffLen));
 }
