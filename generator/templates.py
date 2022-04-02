@@ -57,5 +57,15 @@ getter_template = """
         }
 """
 
+reference_getter_template = """
+        auto $NAME$() -> decltype(m_$NAME$.get())& {
+            return m_$NAME$.get();
+        }
+
+        auto $NAME$() const -> const decltype(m_$NAME$.get())& {
+            return m_$NAME$.get();
+        }
+"""
+
 assignment_template = 'm_$NAME$ = rhs.m_$NAME$;'
 

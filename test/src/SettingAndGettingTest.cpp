@@ -176,12 +176,17 @@ TEST_F(SettingAndGettingTest, CanSetReference) {
     SimpleTest s;
     OneBool b;
     b.boolean().set(true);
-    s.reference().set(b);
-    EXPECT_TRUE(s.reference().get().boolean().get());
+    s.reference() = b;
+    EXPECT_TRUE(s.reference().boolean().get());
 
     b.boolean().set(false);
-    s.reference().set(std::move(b));
-    EXPECT_FALSE(s.reference().get().boolean().get());
+    s.reference() = std::move(b);
+    EXPECT_FALSE(s.reference().boolean().get());
+
+    cereal_pack::Reference<OneBool> bRef;
+    bRef.get().boolean().set(true);
+    s.reference() = bRef;
+    EXPECT_TRUE(s.reference().boolean().get());
 }
 
 TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
@@ -394,4 +399,32 @@ TEST_F(SettingAndGettingTest, CanSetSetOfBuffers) {
     memset(s.set_of_buffers()[1].get(), 0x78, buffLen);
     EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[0].get(), buff.data(), buffLen));
     EXPECT_TRUE(0 == memcmp(s.set_of_buffers()[1].get(), buff2.data(), buffLen));
+}
+
+TEST_F(SettingAndGettingTest, SetNestedProperties) {
+    using namespace cereal_pack_test::test::nesting;
+    Nesting n;
+    n.simple_ref().string().set("Yeah");
+    EXPECT_EQ("Yeah", n.simple_ref().string().get());
+
+    n.simple_ref().reference().boolean().set(true);
+    EXPECT_TRUE(n.simple_ref().reference().boolean().get());
+
+    n.simple_ref().reference().boolean() = {};
+    EXPECT_FALSE(n.simple_ref().reference().boolean().get());
+
+    n.simple_ref().reference().boolean() = {true};
+    EXPECT_TRUE(n.simple_ref().reference().boolean().get());
+
+    n.simple_ref().reference().reset();
+    EXPECT_FALSE(n.simple_ref().reference().boolean().get());
+
+    OneBool ob;
+    ob.boolean().set(true);
+    n.simple_ref().reference() = ob;
+    EXPECT_TRUE(n.simple_ref().reference().boolean().get());
+
+    ob.boolean().set(false);
+    n.simple_ref().reference() = std::move(ob);
+    EXPECT_FALSE(n.simple_ref().reference().boolean().get());
 }

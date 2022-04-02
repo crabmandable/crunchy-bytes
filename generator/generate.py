@@ -3,7 +3,7 @@ import sys
 sys.path.append(".")
 import re
 from collections import OrderedDict
-from .templates import header_template, assignment_template, getter_template
+from .templates import *
 from .property_types import property_types
 
 def header_file(schema):
@@ -67,8 +67,9 @@ def header_file(schema):
 
     # getters
     getters = ""
-    for p in schema.props:
-        getters += getter_template.replace("$NAME$", p)
+    for p, prop in schema.props.items():
+        t = reference_getter_template if prop.type == "reference" else getter_template
+        getters += t.replace("$NAME$", p)
     template = template.replace("$GETTERS$", getters)
 
     # assignment
