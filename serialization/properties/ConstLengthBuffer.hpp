@@ -39,25 +39,33 @@ namespace cereal_pack {
                 memcpy(m_value.data(), data, length);
             }
 
+            bool operator==(const ConstLengthBuffer<length> &rhs) const {
+                return m_value == rhs.m_value;
+            }
+
+            bool operator!=(const ConstLengthBuffer<length> &rhs) const {
+                return !(*this == rhs);
+            }
+
             virtual void reset() override {
                 std::fill(m_value.begin(), m_value.end(), 0);
             }
 
-            virtual int serialize(void* buffer) const override {
+            virtual size_t serialize(void* buffer) const override {
                 memcpy(buffer, m_value.data(), length);
                 return length;
             }
 
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 memcpy(m_value.data(), buffer, length);
                 return length;
             }
 
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 return length;
             }
 
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 return length;
             }
 

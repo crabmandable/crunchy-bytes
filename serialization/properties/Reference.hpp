@@ -16,19 +16,27 @@ namespace cereal_pack {
             Reference(const T& v) : m_value{v} {}
             operator T() const { return m_value; }
 
+            bool operator==(const Reference<T> &rhs) const {
+                return m_value == rhs.m_value;
+            }
+
+            bool operator!=(const Reference<T> &rhs) const {
+                return !(*this == rhs);
+            }
+
             virtual void reset() override {
                 m_value.reset();
             }
-            virtual int serialize(void* buffer) const override {
+            virtual size_t serialize(void* buffer) const override {
                 return m_value.serialize(buffer);
             }
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 return m_value.deserialize(buffer);
             }
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 return m_value.max_serial_length();
             }
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 return m_value.serial_length();
             }
             void set(const T& value) {

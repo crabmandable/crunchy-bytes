@@ -427,4 +427,6 @@ TEST_F(SettingAndGettingTest, SetNestedProperties) {
     ob.boolean().set(false);
     n.simple_ref().reference() = std::move(ob);
     EXPECT_FALSE(n.simple_ref().reference().boolean().get());
+
+    EXPECT_FALSE(n.simple_ref().reference().boolean().get());
 }

@@ -35,13 +35,13 @@ namespace cereal_pack {
                 m_value.clear();
             }
 
-            virtual int serialize(void* buffer) const override {
+            virtual size_t serialize(void* buffer) const override {
                 *(uint32_t*)buffer = m_value.size();
                 memcpy((uint8_t*)buffer + sizeof(uint32_t), m_value.data(), m_value.size());
                 return serial_length();
             }
 
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 uint32_t l = *(uint32_t*)buffer;
                 if (!length_is_valid(l)) {
                     //TODO real error
@@ -52,11 +52,11 @@ namespace cereal_pack {
                 return serial_length();
             }
 
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 return max_buffer_length + sizeof(uint32_t);
             }
 
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 return sizeof(uint32_t) + m_value.size();
             }
 

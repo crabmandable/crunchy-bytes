@@ -4,6 +4,7 @@
 #include <vector>
 #include "properties/Property.hpp"
 #include <stdint.h>
+#include <stddef.h>
 
 namespace cereal_pack {
     class Schema {
@@ -13,28 +14,29 @@ namespace cereal_pack {
                     prop->reset();
                 }
             }
-            int serialize(void* buffer) const {
+
+            size_t serialize(void* buffer) const {
                 unsigned int pos = 0;
                 for (auto* p : properties()) {
                     pos += p->serialize((uint8_t*)buffer + pos);
                 }
                 return pos;
             }
-            int deserialize(const void* buffer) {
+            size_t deserialize(const void* buffer) {
                 unsigned int pos = 0;
                 for (auto* p : properties()) {
                     pos += p->deserialize((uint8_t*)buffer + pos);
                 }
                 return pos;
             }
-            unsigned int max_serial_length() const {
+            size_t max_serial_length() const {
                 unsigned int accum = 0;
                 for (auto* p : properties()) {
                     accum += p->max_serial_length();
                 }
                 return accum;
             }
-            unsigned int serial_length() const {
+            size_t serial_length() const {
                 unsigned int accum = 0;
                 for (auto* p : properties()) {
                     accum += p->serial_length();
@@ -42,7 +44,7 @@ namespace cereal_pack {
                 return accum;
             }
 
-            unsigned int number_of_properties() const {
+            size_t number_of_properties() const {
                 return properties().size();
             }
 

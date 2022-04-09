@@ -13,25 +13,33 @@ namespace cereal_pack {
             Primitive(const T& v) : m_value{v} {}
             operator T() const { return m_value; }
 
+            bool operator==(const Primitive<T> &rhs) const {
+                return m_value == rhs.m_value;
+            }
+
+            bool operator!=(const Primitive<T> &rhs) const {
+                return !(*this == rhs);
+            }
+
             virtual void reset() override {
                 m_value = (T)0;
             }
 
-            virtual int serialize(void* buffer) const override {
+            virtual size_t serialize(void* buffer) const override {
                 memcpy(buffer, &m_value, sizeof(m_value));
                 return sizeof(T);
             };
 
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 memcpy(&m_value, buffer, sizeof(m_value));
                 return sizeof(T);
             };
 
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 return sizeof(T);
             }
 
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 return sizeof(T);
             }
 

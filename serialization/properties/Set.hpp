@@ -21,7 +21,7 @@ namespace cereal_pack {
                 m_value.clear();
             }
 
-            virtual int serialize(void* buffer) const override {
+            virtual size_t serialize(void* buffer) const override {
                 *(uint32_t*)buffer = m_value.size();
                 uint8_t* pos = (uint8_t*)buffer + sizeof(uint32_t);
                 for (const auto& item : m_value) {
@@ -30,7 +30,7 @@ namespace cereal_pack {
                 return pos - (uint8_t*)buffer;
             }
 
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 uint32_t items = *(uint32_t*)buffer;
                 if (!number_of_items_is_valid(items)) {
                     //TODO real error
@@ -45,12 +45,12 @@ namespace cereal_pack {
                 return pos - (uint8_t*)buffer;
             }
 
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 T t;
                 return t.max_serial_length() * max_items + sizeof(uint32_t);
             }
 
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 unsigned int accum = 0;
                 for (auto& item: m_value) {
                     accum += item.serial_length();

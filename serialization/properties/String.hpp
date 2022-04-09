@@ -13,12 +13,20 @@ namespace cereal_pack {
                 m_value = "";
             }
 
-            virtual int serialize(void* buffer) const override {
+            bool operator==(const String<max_string_length> &rhs) const {
+                return m_value == rhs.m_value;
+            }
+
+            bool operator!=(const String<max_string_length> &rhs) const {
+                return !(*this == rhs);
+            }
+
+            virtual size_t serialize(void* buffer) const override {
                 strcpy((char*)buffer, m_value.c_str());
                 return serial_length();
             }
 
-            virtual int deserialize(const void* buffer) override {
+            virtual size_t deserialize(const void* buffer) override {
                 const char* c = (const char*)buffer;
                 while (*(c++)) {
                     unsigned int len = c - (const char*)buffer;
@@ -32,11 +40,11 @@ namespace cereal_pack {
                 return serial_length();
             }
 
-            virtual unsigned int max_serial_length() const override {
+            virtual size_t max_serial_length() const override {
                 return max_string_length + 1;
             }
 
-            virtual unsigned int serial_length() const override {
+            virtual size_t serial_length() const override {
                 return 1 + m_value.size();
             }
 
