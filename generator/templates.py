@@ -33,6 +33,17 @@ class $NAME$ : public cereal_pack::Schema {
         $NAME$(const $NAME$ &other) {
             *this = other;
         }
+
+
+        bool operator==(const $NAME$ &rhs) const {
+            $EQUALITY$
+            return true;
+        }
+
+        bool operator!=(const $NAME$ &rhs) const {
+            return !(*this == rhs);
+        }
+
         $GETTERS$
     private:
         const std::vector<cereal_pack::Property*> m_properties = {
@@ -68,4 +79,6 @@ reference_getter_template = """
 """
 
 assignment_template = 'm_$NAME$ = rhs.m_$NAME$;'
+
+equality_template = 'if (m_$NAME$ != rhs.m_$NAME$) return false;'
 

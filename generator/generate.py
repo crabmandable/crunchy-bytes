@@ -78,6 +78,12 @@ def header_file(schema):
         assignements.append(assignment_template.replace("$NAME$", p))
     template = replace_placeholder(template, 'ASSIGNMENT', assignements)
 
+    # equality
+    equality = []
+    for p in schema.props:
+        equality.append(equality_template.replace("$NAME$", p))
+    template = replace_placeholder(template, 'EQUALITY', equality)
+
     # includes
     to_include = ['#include "{}.hpp"'.format(i.replace("::", "/")) for i in schema.references]
     template = replace_placeholder(template, 'INCLUDES', to_include)

@@ -31,6 +31,14 @@ namespace cereal_pack {
                 memcpy(m_value.data(), data.data(), data.size());
             }
 
+            bool operator==(const DynamicLengthBuffer<max_buffer_length> &rhs) const {
+                return m_value == rhs.m_value;
+            }
+
+            bool operator!=(const DynamicLengthBuffer<max_buffer_length> &rhs) const {
+                return !(*this == rhs);
+            }
+
             virtual void reset() override {
                 m_value.clear();
             }
