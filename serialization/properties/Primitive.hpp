@@ -13,6 +13,15 @@ namespace cereal_pack {
             Primitive(const T& v) : m_value{v} {}
             operator T() const { return m_value; }
 
+            Primitive<T>& operator=(const Primitive<T> &rhs) {
+                if (this == &rhs) return *this;
+                m_value = rhs.m_value;
+                return *this;
+            }
+            Primitive(const Primitive<T> &other) {
+                *this = other;
+            }
+
             bool operator==(const Primitive<T> &rhs) const {
                 return m_value == rhs.m_value;
             }

@@ -16,6 +16,16 @@ namespace cereal_pack {
             Reference(const T& v) : m_value{v} {}
             operator T() const { return m_value; }
 
+            Reference<T>& operator=(const Reference<T> &rhs) {
+                if (this == &rhs) return *this;
+                m_value = rhs.m_value;
+                return *this;
+            }
+
+            Reference(const Reference<T> &other) {
+                *this = other;
+            }
+
             bool operator==(const Reference<T> &rhs) const {
                 return m_value == rhs.m_value;
             }

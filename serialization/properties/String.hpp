@@ -9,8 +9,16 @@ namespace cereal_pack {
     template <size_t max_string_length>
     class String: public Property {
         public:
-            virtual void reset() override {
-                m_value = "";
+            String() = default;
+
+            String<max_string_length>& operator=(const String<max_string_length> &rhs) {
+                if (this == &rhs) return *this;
+                m_value = rhs.m_value;
+                return *this;
+            }
+
+            String(const String<max_string_length> &other) {
+                *this = other;
             }
 
             bool operator==(const String<max_string_length> &rhs) const {
@@ -19,6 +27,10 @@ namespace cereal_pack {
 
             bool operator!=(const String<max_string_length> &rhs) const {
                 return !(*this == rhs);
+            }
+
+            virtual void reset() override {
+                m_value = "";
             }
 
             virtual size_t serialize(void* buffer) const override {

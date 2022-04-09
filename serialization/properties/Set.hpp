@@ -17,6 +17,16 @@ namespace cereal_pack {
         public:
             Set() = default;
 
+            Set<T, max_items>& operator=(const Set<T, max_items> &rhs) {
+                if (this == &rhs) return *this;
+                m_value = rhs.m_value;
+                return *this;
+            }
+
+            Set(const Set<T, max_items> &other) {
+                *this = other;
+            }
+
             bool operator==(const Set<T, max_items> &rhs) const {
                 return m_value == rhs.m_value;
             }

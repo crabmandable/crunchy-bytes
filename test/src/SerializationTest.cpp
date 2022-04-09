@@ -65,13 +65,13 @@ TEST_F(SerializationTest, SerializeOneBool) {
     buffer.resize(inOB.max_serial_length());
 
     auto len = inOB.serialize(buffer.data());
-    ASSERT_EQ(len, 1);
+    EXPECT_EQ(len, 1);
 
     OneBool outOB;
     len = outOB.deserialize(buffer.data());
-    ASSERT_EQ(len, 1);
+    EXPECT_EQ(len, 1);
 
-    ASSERT_EQ(outOB, inOB);
+    EXPECT_EQ(outOB, inOB);
 }
 
 TEST_F(SerializationTest, SerializeSimple) {
@@ -82,12 +82,12 @@ TEST_F(SerializationTest, SerializeSimple) {
     buffer.resize(inST.max_serial_length());
 
     auto len = inST.serialize(buffer.data());
-    ASSERT_EQ(len, inST.serial_length());
-    ASSERT_EQ(len, 48);
+    EXPECT_EQ(len, inST.serial_length());
+    EXPECT_EQ(len, 177);
 
     SimpleTest outST;
     len = outST.deserialize(buffer.data());
-    ASSERT_EQ(len, 48);
+    EXPECT_EQ(len, 177);
 
-    ASSERT_EQ(inST, outST);
+    EXPECT_EQ(inST, outST);
 }

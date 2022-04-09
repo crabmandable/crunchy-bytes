@@ -39,6 +39,16 @@ namespace cereal_pack {
                 memcpy(m_value.data(), data, length);
             }
 
+            ConstLengthBuffer<length>& operator=(const ConstLengthBuffer<length> &rhs) {
+                if (this == &rhs) return *this;
+                m_value = rhs.m_value;
+                return *this;
+            }
+
+            ConstLengthBuffer(const ConstLengthBuffer<length> &other) {
+                *this = other;
+            }
+
             bool operator==(const ConstLengthBuffer<length> &rhs) const {
                 return m_value == rhs.m_value;
             }
