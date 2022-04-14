@@ -73,7 +73,7 @@ reference_getter_template = """
             return m_$NAME$.get();
         }
 
-        auto $NAME$() const -> const decltype(m_$NAME$.get())& {
+        auto $NAME$() const -> decltype(m_$NAME$.get())& {
             return m_$NAME$.get();
         }
 """
