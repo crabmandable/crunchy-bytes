@@ -91,3 +91,29 @@ TEST_F(SerializationTest, SerializeSimple) {
 
     EXPECT_EQ(inST, outST);
 }
+
+TEST_F(SerializationTest, SerializeNested) {
+    Nesting inNest;
+    inNest.bool_ref().boolean().set(true);
+    PopulateSimpleTest(inNest.simple_ref());
+    inNest.set_of_bool().resize(2);
+    inNest.set_of_bool()[0].boolean().set(false);
+    inNest.set_of_bool()[1].boolean().set(true);
+    inNest.set_of_simple().resize(2);
+    PopulateSimpleTest(inNest.set_of_simple()[0]);
+    PopulateSimpleTest(inNest.set_of_simple()[1]);
+
+    std::vector<uint8_t> buffer;
+    buffer.resize(inNest.max_serial_length());
+
+    auto len = inNest.serialize(buffer.data());
+    EXPECT_EQ(len, inNest.serial_length());
+    // 3 simples, 2 bools, and 2 length lengths
+    EXPECT_EQ(len, 177 * 3 + 3 + 4 * 2 );
+
+    Nesting outNest;
+    len = outNest.deserialize(buffer.data());
+    EXPECT_EQ(len, 177 * 3 + 3 + 4 * 2);
+
+    EXPECT_EQ(inNest, outNest);
+}
