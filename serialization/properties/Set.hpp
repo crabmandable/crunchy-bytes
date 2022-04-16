@@ -2,6 +2,7 @@
 #define _CEREAL_PACK_SET_HPP_
 
 #include "Property.hpp"
+#include "../CerealPackException.hpp"
 #include <type_traits>
 #include <vector>
 #include <stdint.h>
@@ -51,8 +52,7 @@ namespace cereal_pack {
             virtual size_t deserialize(const void* buffer) override {
                 uint32_t items = *(uint32_t*)buffer;
                 if (!number_of_items_is_valid(items)) {
-                    //TODO real error
-                    throw "Unable to deserialize set, it exceeds max length";
+                    throw CerealPackException("Unable to deserialize `Set`, number of items exceeds max length");
                 }
                 resize(items);
                 const uint8_t* pos = (uint8_t*)buffer + sizeof(uint32_t);
@@ -78,8 +78,7 @@ namespace cereal_pack {
 
             void set(const std::vector<T>& data) {
                 if (!number_of_items_is_valid(data.size())) {
-                    //TODO real err
-                    throw "Unable to set Set, too many items";
+                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = data;
             }
@@ -90,8 +89,7 @@ namespace cereal_pack {
                   "Expected `Container` to contain elements convertible to `T`");
 
                 if (!number_of_items_is_valid(data.size())) {
-                    //TODO real err
-                    throw "Unable to set Set, too many items";
+                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = {data.begin(), data.end()};
             }
@@ -99,8 +97,7 @@ namespace cereal_pack {
             template <typename... Args>
             auto push_back(Args&&... args) {
                 if (!number_of_items_is_valid(1 + m_value.size())) {
-                    //TODO real err
-                    throw "Unable to set Set, too many items";
+                    throw CerealPackException("Unable to `push_back` item to `Set`, number of items exceeds max length");
                 }
                 return m_value.push_back(std::forward<Args>(args)...);
             }
@@ -108,8 +105,7 @@ namespace cereal_pack {
             template <typename... Args>
             auto emplace_back(Args&&... args) {
                 if (!number_of_items_is_valid(1 + m_value.size())) {
-                    //TODO real err
-                    throw "Unable to set Set, too many items";
+                    throw CerealPackException("Unable to `emplace_back` item to `Set`, number of items exceeds max length");
                 }
                 return m_value.emplace_back(std::forward<Args>(args)...);
             }
@@ -136,8 +132,7 @@ namespace cereal_pack {
 
             void resize(size_t length) {
                 if (!number_of_items_is_valid(length)) {
-                    //TODO real error
-                    throw "Unable to resize set, it exceeds max length";
+                    throw CerealPackException("Unable to resize `Set`, number of items exceeds max length");
                 }
                 m_value.resize(length);
             }

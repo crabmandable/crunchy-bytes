@@ -1,6 +1,8 @@
 #ifndef _CEREAL_PACK_STRING_HPP_
 #define _CEREAL_PACK_STRING_HPP_
+
 #include "Property.hpp"
+#include "../CerealPackException.hpp"
 #include <stdint.h>
 #include <string>
 #include <cstring>
@@ -43,8 +45,7 @@ namespace cereal_pack {
                 while (*(c++)) {
                     unsigned int len = c - (const char*)buffer;
                     if (!length_is_valid(len)) {
-                        //TODO real error
-                        throw "Unable to deserialize string, it exceeds max length";
+                        throw CerealPackException("Unable to deserialize `String`, it exceeds max length");
                     }
 
                 }
@@ -62,8 +63,7 @@ namespace cereal_pack {
 
             void set(const std::string& str) {
                 if (!length_is_valid(str.size())) {
-                    // TODO real err
-                    throw "Unable to set string, its too long";
+                    throw CerealPackException("Unable to set `String`, it exceeds max length");
                 }
                 m_value = str;
             }

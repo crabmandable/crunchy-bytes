@@ -1,6 +1,7 @@
 #ifndef _CERAL_PACK_CONSTLENGTHBUFFER_HPP_
 #define _CERAL_PACK_CONSTLENGTHBUFFER_HPP_
 #include "Property.hpp"
+#include "../CerealPackException.hpp"
 #include <stdint.h>
 #include <stddef.h>
 #include <cstring>
@@ -19,7 +20,7 @@ namespace cereal_pack {
             template < template < class ... > class Container, class ... Args >
             ConstLengthBuffer(const Container<uint8_t, Args...>& data) {
                 if (data.size() > length) {
-                    throw "Unable to construct buffer, too big";
+                    throw CerealPackException("Unable to construct `ConstLengthBuffer`, container exceeds max length");
                 }
                 m_value.resize(length);
                 std::fill(m_value.begin(), m_value.end(), 0);
