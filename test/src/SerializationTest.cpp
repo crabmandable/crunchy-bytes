@@ -37,6 +37,9 @@ protected:
         st.uint64().set(22231214);
         st.int64().set(-22231214);
 
+        st.floating_point().set(10.3414);
+        st.double_precision().set(100000242.180808);
+
         st.dynamic_length_buffer().set(buff, SimpleTest::constants::dynamic_length_buffer_max_length);
         st.const_length_buffer().set(buff);
 
@@ -83,11 +86,11 @@ TEST_F(SerializationTest, SerializeSimple) {
 
     auto len = inST.serialize(buffer.data());
     EXPECT_EQ(len, inST.serial_length());
-    EXPECT_EQ(len, 177);
+    EXPECT_EQ(len, 189);
 
     SimpleTest outST;
     len = outST.deserialize(buffer.data());
-    EXPECT_EQ(len, 177);
+    EXPECT_EQ(len, 189);
 
     EXPECT_EQ(inST, outST);
 }
@@ -109,11 +112,11 @@ TEST_F(SerializationTest, SerializeNested) {
     auto len = inNest.serialize(buffer.data());
     EXPECT_EQ(len, inNest.serial_length());
     // 3 simples, 2 bools, and 2 length lengths
-    EXPECT_EQ(len, 177 * 3 + 3 + 4 * 2 );
+    EXPECT_EQ(len, 189 * 3 + 3 + 4 * 2 );
 
     Nesting outNest;
     len = outNest.deserialize(buffer.data());
-    EXPECT_EQ(len, 177 * 3 + 3 + 4 * 2);
+    EXPECT_EQ(len, 189 * 3 + 3 + 4 * 2);
 
     EXPECT_EQ(inNest, outNest);
 }

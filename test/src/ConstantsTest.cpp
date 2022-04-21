@@ -27,9 +27,9 @@ TEST_F(ConstantsTest, Constants) {
     EXPECT_EQ(5, SimpleTest::constants::set_of_references_max_items);
     EXPECT_EQ(5, SimpleTest::constants::set_of_buffers_max_items);
     EXPECT_EQ(24, SimpleTest::constants::set_of_buffers_item_max_length);
-    EXPECT_EQ(259, SimpleTest::constants::max_serial_length);
+    EXPECT_EQ(271, SimpleTest::constants::max_serial_length);
 
     EXPECT_EQ(5, Nesting::constants::set_of_bool_max_items);
     EXPECT_EQ(5, Nesting::constants::set_of_simple_max_items);
-    EXPECT_EQ(1568, Nesting::constants::max_serial_length);
+    EXPECT_EQ(1640, Nesting::constants::max_serial_length);
 };

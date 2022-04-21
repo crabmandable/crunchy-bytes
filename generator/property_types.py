@@ -62,6 +62,21 @@ property_types = {
                 'class': 'cereal_pack::Primitive<uint64_t>'
                 },
 
+        'float': {
+            'const_length': True,
+            'predefined_length': 4,
+            'variable_length': False,
+            'class': 'cereal_pack::Primitive<float>'
+            },
+
+        'double': {
+            'const_length': True,
+            'predefined_length': 8,
+            'variable_length': False,
+            'class': 'cereal_pack::Primitive<double>'
+            },
+
+
         'const_length_buffer': {
                 'const_length': True,
                 'predefined_length': False,

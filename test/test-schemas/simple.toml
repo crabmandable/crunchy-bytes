@@ -35,6 +35,12 @@ order = ['string', 'boolean', 'uint8', 'dynamic_length_buffer']
     [props.int64]
     type = "int64_t"
 
+    [props.floating_point]
+    type = "float"
+
+    [props.double_precision]
+    type = "double"
+
     [props.dynamic_length_buffer]
     type = "dynamic_length_buffer"
     max_length = 32
