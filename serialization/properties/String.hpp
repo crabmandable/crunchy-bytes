@@ -13,6 +13,14 @@ namespace cereal_pack {
         public:
             String() = default;
 
+            String(const char* value) {
+                m_value = value;
+            }
+
+            String(const std::string value) {
+                m_value = value;
+            }
+
             String<max_string_length>& operator=(const String<max_string_length> &rhs) {
                 if (this == &rhs) return *this;
                 m_value = rhs.m_value;

@@ -5,6 +5,7 @@
 #include "../CerealPackException.hpp"
 #include <type_traits>
 #include <vector>
+#include <array>
 #include <stdint.h>
 #include <stddef.h>
 
@@ -81,6 +82,16 @@ namespace cereal_pack {
                     throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = data;
+            }
+
+            template <typename A, size_t n>
+            void set(const std::array<A, n>& data) {
+                static_assert(std::is_convertible<A, T>::value,
+                  "Expected `Container` to contain elements convertible to `T`");
+                if (!number_of_items_is_valid(data.size())) {
+                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
+                }
+                m_value = {data.begin(), data.end()};
             }
 
             template <typename A, template < class ... > class Container, class ... Args >
