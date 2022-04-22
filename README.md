@@ -1,4 +1,4 @@
-# Cereal Pack
+# Cereal Pack 🥣
 
 #### C++ Schema Serialization Library
 
@@ -101,6 +101,15 @@ float, double
 These types don't need any more definition outside the type, and will be represented as
 `cereal_pack::Primitive<T>` in the generated c++ schema.
 
+E.g.
+```toml
+[props.is_something]
+type = "bool"
+
+[props.num_things]
+type = "uint32_t"
+```
+
 ___
 #### Variable length data
 There are 2 types for byte arrays (think `std::vector<uint8_t>`),
@@ -202,7 +211,7 @@ Using a namespace will create a subdirectory with the same name, in the output d
 where the c++ classes are generated. This is done to avoid path conflicts
 
 ```c++
-include "my_schemas/cereal_pack_testing/test/Example.hpp"
+#include "my_schemas/cereal_pack_testing/test/Example.hpp"
 cereal_pack_testing::test::Example e;
 ```
 
