@@ -3,6 +3,7 @@
 #include <cereal_pack.hpp>
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
+#include <UsingGlobals.hpp>
 
 class SettingAndGettingTest : public ::testing::Test {
 protected:
@@ -429,4 +430,49 @@ TEST_F(SettingAndGettingTest, SetNestedProperties) {
     EXPECT_FALSE(n.simple_ref().reference().boolean().get());
 
     EXPECT_FALSE(n.simple_ref().reference().boolean().get());
+}
+
+TEST_F(SettingAndGettingTest, SetPropetiesUsingGlobals) {
+    UsingGlobals g;
+    using namespace cereal_pack::globals;
+    uint8_t buff[max_cereal_pack_serial_length];
+    memset(buff, 0x89, sizeof(buff));
+    g.data_one().set(buff);
+    EXPECT_EQ(0, memcmp(g.data_one().get(), buff, max_item_length));
+
+    g.data_two().set(buff, max_item_length);
+    EXPECT_EQ(g.data_two().get().size(), max_item_length);
+    EXPECT_EQ(0, memcmp(g.data_two().get().data(), buff, max_item_length));
+
+    char name[max_name_length + 1] = {0};
+    memset(name, 'z', max_name_length);
+    g.name().set(std::string(name));
+    EXPECT_EQ(std::string(name), g.name().get());
+
+    std::vector<uint32_t> numbers;
+    for (unsigned int i = 0; i < max_elements; i++) {
+        numbers.push_back(rand());
+    }
+    g.some_list_of_numbers().set(numbers);
+    for (int i = 0; i < max_elements; i++) {
+        EXPECT_EQ(numbers[i], g.some_list_of_numbers()[i]);
+    }
+
+    for (unsigned int i = 0; i < max_elements; i++) {
+        g.some_list_of_names().push_back(name);
+    }
+    for (unsigned int i = 0; i < max_elements; i++) {
+        EXPECT_EQ(g.some_list_of_names()[i], std::string(name));
+    }
+
+    std::array<std::array<uint8_t, max_item_length>, max_elements> buffers;
+    for (uint8_t i = 0; i < max_elements; i++) {
+        std::fill(buffers[i].begin(), buffers[i].end(), i);
+    }
+    g.some_list_of_buffers().set(buffers);
+    for (uint8_t i = 0; i < max_elements; i++) {
+        EXPECT_EQ(0, memcmp(g.some_list_of_buffers()[i].get(), buffers[i].data(), max_item_length));
+    }
+
+    EXPECT_EQ(g.serial_length(), g.max_serial_length());
 }

@@ -6,6 +6,27 @@ from collections import OrderedDict
 from .templates import *
 from .property_types import property_types
 
+def _length_to_const(length):
+    if type(length) == int:
+        return str(length)
+    elif type(length) == tuple:
+        return "cereal_pack::globals::" + length[0]
+    else:
+        raise Exception("Invalid length: {}".format(length))
+
+def globals_header(globals):
+    template = globals_template
+    global_defs = []
+    if 'max_cereal_pack_serial_length' in globals:
+        global_defs.append('constexpr uint32_t max_cereal_pack_serial_length = {};'.format(globals['max_cereal_pack_serial_length']))
+
+    if 'lengths' in globals:
+        for name, val in globals['lengths'].items():
+            global_defs.append('constexpr uint32_t {} = {};'.format(name, val))
+
+    template = replace_placeholder(template, 'GLOBALS', global_defs)
+    return template
+
 def header_file(schema):
     template = header_template
     # schema name
@@ -35,17 +56,16 @@ def header_file(schema):
         length_const = None
 
         if prop.type == "set":
-            length_const = str(prop.max_items)
+            length_const = _length_to_const(prop.max_items)
             if prop.reference:
                 ref_class = property_types['reference']['class'].replace("$REFERENCE$", prop.reference.name_with_namespace)
             else:
                 ref_class = class_for_prop(prop.item_prop)
             klass = klass.replace("$CLASS$", ref_class)
-            length_const = str(prop.max_items)
         elif prop.type in ["string", "dynamic_length_buffer"]:
-            length_const = str(prop.dict['max_length'])
+            length_const = _length_to_const(prop.length_constant)
         elif prop.type == "const_length_buffer":
-            length_const = str(prop.max_length)
+            length_const = _length_to_const(prop.length_constant)
         elif prop.type == "reference":
             klass = klass.replace('$REFERENCE$', prop.reference.name_with_namespace)
 
@@ -86,17 +106,19 @@ def header_file(schema):
 
     # includes
     to_include = ['#include "{}.hpp"'.format(i.replace("::", "/")) for i in schema.references]
+    if schema.uses_globals():
+        to_include.append('#include "cereal_pack_globals.hpp"')
     template = replace_placeholder(template, 'INCLUDES', to_include)
 
     # constants
     constants = []
     for p in schema.props.values():
         if p.type == 'set':
-            constants.append('static constexpr size_t {}_max_items = {};'.format(p.name, p.max_items))
+            constants.append('static constexpr size_t {}_max_items = {};'.format(p.name, _length_to_const(p.max_items)))
             if p.item_prop and p.item_prop.length_constant:
-                constants.append('static constexpr size_t {}_item_max_length = {};'.format(p.name, p.item_prop.length_constant))
+                constants.append('static constexpr size_t {}_item_max_length = {};'.format(p.name, _length_to_const(p.item_prop.length_constant)))
         elif p.length_constant:
-            constants.append('static constexpr size_t {}_max_length = {};'.format(p.name, p.length_constant))
+            constants.append('static constexpr size_t {}_max_length = {};'.format(p.name, _length_to_const(p.length_constant)))
 
     constants.append('static constexpr size_t max_serial_length = {};'.format(schema.max_length()))
     template = replace_placeholder(template, 'CONSTANTS', constants)

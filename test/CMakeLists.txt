@@ -14,8 +14,10 @@ set(CEREAL_PACK_SCHEMA_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/nesting.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/one_bool.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/simple.toml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/using_globals.toml"
     )
 
+set(CEREAL_PACK_GLOBALS "${CMAKE_CURRENT_SOURCE_DIR}/test_globals.toml")
 set(CEREAL_PACK_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/test-schemas")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../" cereal_pack_interface)

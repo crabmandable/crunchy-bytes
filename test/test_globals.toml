@@ -1,0 +1,5 @@
+max_cereal_pack_serial_length = 4096
+
+lengths.max_item_length = 100
+lengths.max_name_length = 255
+lengths.max_elements = 10

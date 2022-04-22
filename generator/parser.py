@@ -4,8 +4,37 @@ import re
 from .errors import CerealPackException
 from .property_types import length_length
 
-def parse(file_path):
-    raw = toml.load(file_path)
+def load_toml(file_path):
+    try:
+        return toml.load(file_path)
+    except toml.decoder.TomlDecodeError as e:
+        raise CerealPackException(file_path, 'TOML decode error: {}'.format(str(e)))
+
+def validate_uint32(file_path, val, err_desc):
+    if type(val) != int:
+        raise CerealPackException(file_path, '{} is not an integer'.format(err_desc))
+    if val < 0:
+        raise CerealPackException(file_path, '{} cannot be negative'.format(err_desc))
+    if val > 0xFFFFFFFF:
+        raise CerealPackException(file_path, '{} exceeds UINT32_MAX '.format(err_desc))
+
+def parse_globals(file_path):
+    raw = load_toml(file_path)
+
+    if 'lengths' in raw:
+        if not isinstance(raw['lengths'], dict):
+            raise CerealPackException(file_path, 'expected "lengths" to be a dictionary')
+        for name, val in raw['lengths'].items():
+            validate_uint32(file_path, val, 'length ' + name)
+
+    if 'max_cereal_pack_serial_length' in raw:
+        validate_uint32(file_path, raw['max_cereal_pack_serial_length'], '"max_cereal_pack_serial_length"')
+
+    return raw
+
+def parse_schema(file_path, globals=None):
+    raw = load_toml(file_path)
+
     if 'name' not in raw:
         raise CerealPackException(file_path, 'top level field "name" not found')
 
@@ -38,17 +67,18 @@ def parse(file_path):
             if not isinstance(o, str):
                 raise CerealPackException(file_path, 'top level property "order" should be an array of property names')
 
-    return schema.Schema(file_path, raw['name'], raw['props'], namespace, order)
+    return schema.Schema(file_path, raw['name'], raw['props'], namespace, order, globals)
 
-def load_schemas(files):
+def load_schemas(files, globals_file=None):
     schemas = {}
 
+    globals = parse_globals(globals_file) if globals_file else None
     for file in files:
-        s = parse(file)
+        s = parse_schema(file, globals)
         schemas[s.name_with_namespace] = s
 
     # resolve references
-    for _, schema in schemas.items():
+    for schema in schemas.values():
         for ref_name in schema.references:
             if ref_name not in schemas:
                 raise CerealPackException(schema.file_path, 'unable to resolve reference to "{}"'.format(ref_name))
@@ -77,12 +107,21 @@ def load_schemas(files):
         return schema.max_length()
 
     # update max_length of references
-    for _, schema in schemas.items():
+    for name, schema in schemas.items():
         try:
             resolve_max_length(schema)
         except RecursionError:
             raise CerealPackException(schema.file_path, 'unable to resolve references due to circular reference')
 
+        if globals and 'max_cereal_pack_serial_length' in globals:
+            if schema.max_length() > globals['max_cereal_pack_serial_length']:
+                raise CerealPackException(
+                    schema.file_path,
+                    'schema exceeds max length defined in "{}": {} > {}'.format(globals_file, schema.max_length(), globals['max_cereal_pack_serial_length'])
+                )
+
+    if globals:
+        return schemas, globals
     return schemas
 
 if __name__ == '__main__':

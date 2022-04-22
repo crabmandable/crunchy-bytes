@@ -82,3 +82,13 @@ assignment_template = 'm_$NAME$ = rhs.m_$NAME$;'
 
 equality_template = 'if (m_$NAME$ != rhs.m_$NAME$) return false;'
 
+globals_template = """
+#ifndef __CEREAL_PACK_GLOBALS_H__
+#define __CEREAL_PACK_GLOBALS_H__
+namespace cereal_pack {
+    namespace globals {
+        $GLOBALS$
+    };
+};
+#endif // __CEREAL_PACK_GLOBALS_H__
+"""

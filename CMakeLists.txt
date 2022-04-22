@@ -25,11 +25,16 @@ if (NOT DEFINED CEREAL_PACK_OUTPUT_DIR)
         "An output directory for generated cereal_pack classes must be set using the CMake variable CEREAL_PACK_OUTPUT_DIR")
 endif()
 
+if (DEFINED CEREAL_PACK_GLOBALS)
+    set(CEREAL_PACK_GLOBALS_OPT "-g" "${CEREAL_PACK_GLOBALS}")
+endif()
+
 set(CEREAL_PACK_GENERATE_COMMAND
     "${Python3_EXECUTABLE}"
     "${CMAKE_CURRENT_SOURCE_DIR}/cereal_pack.py"
     "-o" "${CEREAL_PACK_OUTPUT_DIR}"
     "-s" "${CEREAL_PACK_SCHEMA_FILES}"
+    "${CEREAL_PACK_GLOBALS_OPT}"
     )
 
 execute_process(
@@ -39,7 +44,7 @@ execute_process(
 )
 
 if (NOT RETURN_VALUE EQUAL 0)
-    message(FATAL_ERROR "Failed to generate source list from cereal_pack schemas in")
+    message(FATAL_ERROR "Failed to generate source list from cereal_pack schemas")
 endif()
 
 set(CEREAL_PACK_GENERATOR_CODE "")
@@ -49,7 +54,7 @@ file(GLOB_RECURSE CEREAL_PACK_GENERATOR_CODE
 
 add_custom_command(
     COMMAND ${CEREAL_PACK_GENERATE_COMMAND}
-    DEPENDS ${CEREAL_PACK_GENERATOR_CODE} ${CEREAL_PACK_SCHEMA_FILES}
+    DEPENDS ${CEREAL_PACK_GENERATOR_CODE} ${CEREAL_PACK_SCHEMA_FILES} ${CEREAL_PACK_GLOBALS}
     OUTPUT ${GENERATED_FILES}
     COMMENT "Generating cereal_pack classes"
 )

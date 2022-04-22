@@ -1,0 +1,24 @@
+name = "UsingGlobals"
+
+[props]
+[props.data_one]
+    type = "const_length_buffer"
+    length = "max_item_length"
+[props.data_two]
+    type = "dynamic_length_buffer"
+    max_length = "max_item_length"
+[props.name]
+    type = "string"
+    max_length = "max_name_length"
+[props.some_list_of_numbers]
+    type = "set"
+    max_items = "max_elements"
+    item = { type = "uint32_t" }
+[props.some_list_of_names]
+    type = "set"
+    max_items = "max_elements"
+    item = { type = "string", max_length = "max_name_length" }
+[props.some_list_of_buffers]
+    type = "set"
+    max_items = "max_elements"
+    item = { type = "const_length_buffer", length = "max_item_length" }
