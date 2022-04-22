@@ -4,6 +4,7 @@
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
 #include <UsingGlobals.hpp>
+#include <EnumExample.hpp>
 
 class SettingAndGettingTest : public ::testing::Test {
 protected:
@@ -475,4 +476,12 @@ TEST_F(SettingAndGettingTest, SetPropetiesUsingGlobals) {
     }
 
     EXPECT_EQ(g.serial_length(), g.max_serial_length());
+}
+
+TEST_F(SettingAndGettingTest, SetEnums) {
+    EnumExample e;
+    e.simple_enum().set(EnumExample::simple_enum_t::one);
+    EXPECT_EQ(EnumExample::simple_enum_t::one, e.simple_enum().get());
+    e.another_enum().set(EnumExample::another_enum_t::two);
+    EXPECT_EQ(EnumExample::another_enum_t::two, e.another_enum().get());
 }

@@ -1,0 +1,16 @@
+name = "EnumExample"
+
+[props]
+    [props.simple_enum]
+    type = "enum"
+    enum.zero = 0
+    enum.one = 1
+    enum.two = 2
+    enum.three = 3
+
+    [props.another_enum]
+    type = "enum"
+    enum.zero = 0
+    enum.one = 1
+    enum.two = 2
+    enum.three = 3

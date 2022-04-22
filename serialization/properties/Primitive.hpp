@@ -7,7 +7,8 @@
 namespace cereal_pack {
     template<class T>
     class Primitive : public Property {
-        static_assert(std::is_fundamental<T>::value, "Primative property must be a fundamental type");
+        static_assert(std::is_fundamental<T>::value || std::is_enum<T>::value,
+                "Primative property must be a fundamental type");
         public:
             Primitive() = default;
             Primitive(const T& v) : m_value{v} {}
@@ -55,7 +56,7 @@ namespace cereal_pack {
             void set(T val) { m_value = val; }
             T get() const { return m_value; }
         private:
-            T m_value = 0;
+            T m_value = (T)0;
     };
 };
 

@@ -68,6 +68,8 @@ def header_file(schema):
             length_const = _length_to_const(prop.length_constant)
         elif prop.type == "reference":
             klass = klass.replace('$REFERENCE$', prop.reference.name_with_namespace)
+        elif prop.type == "enum":
+            klass = klass.replace("$CLASS$", prop.name + "_t")
 
         if length_const is not None:
             klass = klass.replace('$LENGTH$', length_const)
@@ -109,6 +111,20 @@ def header_file(schema):
     if schema.uses_globals():
         to_include.append('#include "cereal_pack_globals.hpp"')
     template = replace_placeholder(template, 'INCLUDES', to_include)
+
+    # enums
+    enums = []
+    for p in schema.props.values():
+        # TODO skip global enums
+        if p.type != 'enum':
+            continue
+        e = enum_template.replace('$NAME$', p.name + '_t')
+        values = []
+        for name, val in p.enum.items():
+            values.append('{} = {},'.format(name, val))
+        e = replace_placeholder(e, 'VALUES', values)
+        enums.append(e)
+    template = replace_placeholder(template, 'ENUMS', enums)
 
     # constants
     constants = []

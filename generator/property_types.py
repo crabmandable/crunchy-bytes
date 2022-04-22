@@ -113,6 +113,13 @@ property_types = {
                 'variable_length': False,
                 'class': 'cereal_pack::Set<$CLASS$, $LENGTH$>'
                 },
+
+        'enum': {
+                'const_length': True,
+                'predefined_length': 4,
+                'variable_length': False,
+                'class': 'cereal_pack::Primitive<$CLASS$>'
+                },
 }
 
 length_length = 4

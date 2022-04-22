@@ -9,14 +9,16 @@ $INCLUDES$
 
 $NAMESPACE_START$
 class $NAME$ : public cereal_pack::Schema {
-    private:
-        $PROPERTIES$
     public:
         struct constants {
             $CONSTANTS$
             private:
                 constants();
         };
+        $ENUMS$
+    private:
+        $PROPERTIES$
+    public:
         $NAME$() = default;
         $NAME$($NAME$ &&) = default;
 
@@ -81,6 +83,12 @@ reference_getter_template = """
 assignment_template = 'm_$NAME$ = rhs.m_$NAME$;'
 
 equality_template = 'if (m_$NAME$ != rhs.m_$NAME$) return false;'
+
+enum_template = """
+        enum class $NAME$ : uint32_t {
+            $VALUES$
+        };
+"""
 
 globals_template = """
 #ifndef __CEREAL_PACK_GLOBALS_H__

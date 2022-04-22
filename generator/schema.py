@@ -65,6 +65,10 @@ class Prop:
         if self.type == 'reference':
             self.reference = dict['reference']
 
+        if self.type == 'enum':
+            # TODO global enums
+            self.enum = dict['enum']
+
         if self.type == 'set':
             self.max_items = self._to_length_constant(dict['max_items'])
             if dict['item']['type'] == 'reference':
@@ -85,53 +89,71 @@ class Prop:
         if self.max_length is None and self.reference is None:
             raise CerealPackException(file_path, err_in, 'unable to determine max length of property')
 
-    def validate_prop(self, err_pre, dict):
+    def validate_prop(self, err_pre, prop_dict):
         # type
-        if 'type' not in dict:
+        if 'type' not in prop_dict:
             raise CerealPackException(self.file_path, err_pre, '"type" not defined')
-        if dict['type'] not in property_types:
-            raise CerealPackException(self.file_path, err_pre, 'unknown property type "{}"'.format(dict['type']))
+        if prop_dict['type'] not in property_types:
+            raise CerealPackException(self.file_path, err_pre, 'unknown property type "{}"'.format(prop_dict['type']))
 
-        type_to_validate = dict['type']
+        type_to_validate = prop_dict['type']
         property_type = property_types[type_to_validate]
 
+        if type_to_validate == 'enum':
+            if 'enum' not in prop_dict:
+                raise CerealPackException(self.file_path, err_pre, 'enum property must contain an "enum"')
+            if type(prop_dict['enum']) == str:
+                # TODO global enums
+                raise Exception("oops")
+            elif isinstance(prop_dict['enum'], dict):
+                for val in prop_dict['enum'].values():
+                    if not is_int(val):
+                        raise CerealPackException(self.file_path, err_pre, '"enum" value must be an integer')
+                    if int(val) < 0:
+                        raise CerealPackException(self.file_path, err_pre, '"enum" value must be positive')
+                if len(set(prop_dict['enum'].values())) != len(prop_dict['enum'].values()):
+                    raise CerealPackException(self.file_path, err_pre, '"enum" values are not unique')
+            else:
+                raise CerealPackException(self.file_path, err_pre, 'enum property must contain an "enum" dictionary')
+
         # reference
-        if type_to_validate == 'reference' and 'reference' not in dict:
+        if type_to_validate == 'reference' and 'reference' not in prop_dict:
             raise CerealPackException(self.file_path, err_pre, 'reference property must contain a "reference"')
 
+        # set
         if type_to_validate == 'set':
             # item
-            if 'item' not in dict:
+            if 'item' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, 'set property must contain an "item"')
 
             # max_items
-            if 'max_items' not in dict:
+            if 'max_items' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, 'set property must contain a "max_items"')
-            if not is_int(dict['max_items']):
-                if not self._is_global_length(dict['max_items']):
+            if not is_int(prop_dict['max_items']):
+                if not self._is_global_length(prop_dict['max_items']):
                     raise CerealPackException(self.file_path, err_pre, 'set property must contain an integer "max_items"')
 
             # don't allow a set to contain a set
-            if 'type' in dict['item'] and dict['item']['type'] == 'set':
+            if 'type' in prop_dict['item'] and prop_dict['item']['type'] == 'set':
                 raise CerealPackException(self.file_path, err_pre, 'item of set property cannot be of type "set"')
 
             # validate item
-            self.validate_prop(err_pre + ' in "item" definition:', dict['item'])
+            self.validate_prop(err_pre + ' in "item" definition:', prop_dict['item'])
 
         # length
         if type(property_type['predefined_length']) != int and property_type['const_length']:
-            if 'length' not in dict:
+            if 'length' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, '{} property must contain a "length"'.format(type_to_validate))
-            if not is_int(dict['length']):
-                if not self._is_global_length(dict['length']):
+            if not is_int(prop_dict['length']):
+                if not self._is_global_length(prop_dict['length']):
                     raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "length"'.format(type_to_validate))
 
         # max_length
         if property_type['variable_length']:
-            if 'max_length' not in dict:
+            if 'max_length' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, '{} property must contain a "max_length"'.format(type_to_validate))
-            if not is_int(dict['max_length']):
-                if not self._is_global_length(dict['max_length']):
+            if not is_int(prop_dict['max_length']):
+                if not self._is_global_length(prop_dict['max_length']):
                     raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "max_length"'.format(type_to_validate))
 
     def __str__(self):
