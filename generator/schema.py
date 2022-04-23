@@ -118,9 +118,11 @@ class Prop:
             # max_items
             if 'max_items' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, 'set property must contain a "max_items"')
-            if not is_int(prop_dict['max_items']):
+            if type(prop_dict['max_items']) is str:
                 if not self._is_global_length(prop_dict['max_items']):
-                    raise CerealPackException(self.file_path, err_pre, 'set property must contain an integer "max_items"')
+                    raise CerealPackException(self.file_path, err_pre, 'set property "max_items" is an unknown name. Expected a global length name')
+            elif not is_int(prop_dict['max_items']):
+                raise CerealPackException(self.file_path, err_pre, 'set property must contain an integer "max_items" or a string name of a global length')
 
             # don't allow a set to contain a set
             if 'type' in prop_dict['item'] and prop_dict['item']['type'] == 'set':
@@ -133,9 +135,11 @@ class Prop:
         if type(property_type['predefined_length']) != int and property_type['const_length']:
             if 'length' not in prop_dict:
                 raise CerealPackException(self.file_path, err_pre, '{} property must contain a "length"'.format(type_to_validate))
-            if not is_int(prop_dict['length']):
+            if type(prop_dict['length']) is str:
                 if not self._is_global_length(prop_dict['length']):
-                    raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "length"'.format(type_to_validate))
+                    raise CerealPackException(self.file_path, err_pre, '{} property "length" is an unknown name. Expected a global length name'.format(type_to_validate))
+            elif not is_int(prop_dict['length']):
+                raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "length" or a string name of a global length'.format(type_to_validate))
 
         # max_length
         if property_type['variable_length']:

@@ -44,7 +44,7 @@ execute_process(
 )
 
 if (NOT RETURN_VALUE EQUAL 0)
-    message(FATAL_ERROR "Failed to generate source list from cereal_pack schemas")
+    message(FATAL_ERROR "Failed to generate source list from cereal_pack schemas. See above")
 endif()
 
 set(CEREAL_PACK_GENERATOR_CODE "")

@@ -98,6 +98,8 @@ def load_schemas(files, globals_file=None):
     globals = parse_globals(globals_file) if globals_file else None
     for file in files:
         s = parse_schema(file, globals)
+        if s.name_with_namespace in schemas:
+            raise CerealPackException(s.file_path, 'Schema has same name as "{}"'.format(schemas[s.name_with_namespace].file_path))
         schemas[s.name_with_namespace] = s
 
     # resolve references
