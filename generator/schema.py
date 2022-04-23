@@ -5,18 +5,17 @@ from .validation import is_int
 
 class Prop:
     def _is_global_length(self, val):
-        global_lengths = self.globals['lengths'] if self.globals else {}
-        return type(val) == str and val in global_lengths
+        return type(val) == str and val in self.globals.lengths
 
     def _to_length_constant(self, length):
         if self._is_global_length(length):
-            return length, self.globals['lengths'][length]
+            return length, self.globals.lengths[length]
         else:
             return int(length)
 
     def _to_raw_length(self, length):
         if self._is_global_length(length):
-            return self.globals['lengths'][length]
+            return self.globals.lengths[length]
         else:
             return int(length)
 
@@ -64,8 +63,10 @@ class Prop:
             self.reference = dict['reference']
 
         if self.type == 'enum':
-            # TODO globals
-            self.enum = enums[dict['enum']]
+            if dict['enum'] in enums:
+                self.enum =  dict['enum']
+            elif dict['enum'] in self.globals.enums:
+                self.enum = 'cereal_pack::globals::' + dict['enum']
 
         if self.type == 'set':
             self.max_items = self._to_length_constant(dict['max_items'])
@@ -102,7 +103,7 @@ class Prop:
                 raise CerealPackException(self.file_path, err_pre, '"enum" key must contain an "enum"')
             if type(prop_dict['enum']) != str:
                 raise CerealPackException(self.file_path, err_pre, '"enum" key must be the name of an enum')
-            if prop_dict['enum'] not in enums:
+            if prop_dict['enum'] not in enums and prop_dict['enum'] not in self.globals.enums:
                 raise CerealPackException(self.file_path, err_pre, '"enum" key not found')
 
         # reference

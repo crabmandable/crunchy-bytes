@@ -475,6 +475,16 @@ TEST_F(SettingAndGettingTest, SetPropetiesUsingGlobals) {
         EXPECT_EQ(0, memcmp(g.some_list_of_buffers()[i].get(), buffers[i].data(), max_item_length));
     }
 
+    g.current_location().set(cereal_pack::globals::continent::asia);
+    EXPECT_EQ(cereal_pack::globals::continent::asia, g.current_location().get());
+
+    for (unsigned int i = 0; i < UsingGlobals::constants::bucket_list_max_items; i++) {
+        g.bucket_list().push_back((cereal_pack::globals::continent)i);
+    }
+    for (unsigned int i = 0; i < UsingGlobals::constants::bucket_list_max_items; i++) {
+        EXPECT_EQ((cereal_pack::globals::continent)i, g.bucket_list().get()[i]);
+    }
+
     EXPECT_EQ(g.serial_length(), g.max_serial_length());
 }
 

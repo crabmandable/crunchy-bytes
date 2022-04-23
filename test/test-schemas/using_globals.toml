@@ -22,3 +22,10 @@ name = "UsingGlobals"
     type = "set"
     max_items = "max_elements"
     item = { type = "const_length_buffer", length = "max_item_length" }
+[props.current_location]
+type = "enum"
+enum = "continent"
+[props.bucket_list]
+type = "set"
+max_items = 7
+item = { type = "enum", enum = "continent" }

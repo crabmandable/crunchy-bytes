@@ -14,15 +14,27 @@ def _length_to_const(length):
     else:
         raise Exception("Invalid length: {}".format(length))
 
-def globals_header(globals):
+def globals_header(globals, schemas):
     template = globals_template
     global_defs = []
-    if 'max_cereal_pack_serial_length' in globals:
-        global_defs.append('constexpr uint32_t max_cereal_pack_serial_length = {};'.format(globals['max_cereal_pack_serial_length']))
 
-    if 'lengths' in globals:
-        for name, val in globals['lengths'].items():
-            global_defs.append('constexpr uint32_t {} = {};'.format(name, val))
+    if globals.max_cereal_pack_serial_length:
+        max_cereal_pack_serial_length = globals.max_cereal_pack_serial_length
+    else:
+        max_cereal_pack_serial_length = max(map(lambda s: s.max_length(), schemas.values()))
+    global_defs.append('constexpr uint32_t max_cereal_pack_serial_length = {};'.format(max_cereal_pack_serial_length))
+
+    for name, val in globals.lengths.items():
+        global_defs.append('constexpr uint32_t {} = {};'.format(name, val))
+
+    for enum_name, enum in globals.enums.items():
+        e = enum_template.replace('$NAME$', enum_name)
+        values = []
+        for name, val in enum.items():
+            values.append('{} = {},'.format(name, val))
+        e = replace_placeholder(e, 'VALUES', values)
+        global_defs.append(e)
+
 
     template = replace_placeholder(template, 'GLOBALS', global_defs)
     return template
@@ -69,7 +81,7 @@ def header_file(schema):
         elif prop.type == "reference":
             klass = klass.replace('$REFERENCE$', prop.reference.name_with_namespace)
         elif prop.type == "enum":
-            klass = klass.replace("$CLASS$", prop.dict["enum"])
+            klass = klass.replace("$CLASS$", prop.enum)
 
         if length_const is not None:
             klass = klass.replace('$LENGTH$', length_const)

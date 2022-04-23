@@ -36,7 +36,7 @@ TEST_F(ConstantsTest, Constants) {
 };
 
 TEST_F(ConstantsTest, GlobalConstants) {
-    EXPECT_EQ(4096, cereal_pack::globals::max_cereal_pack_serial_length);
+    EXPECT_EQ(8192, cereal_pack::globals::max_cereal_pack_serial_length);
 
     EXPECT_EQ(10, cereal_pack::globals::max_elements);
     EXPECT_EQ(100, cereal_pack::globals::max_item_length);

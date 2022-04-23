@@ -3,21 +3,14 @@ from . import schema
 import re
 from .errors import CerealPackException
 from .property_types import length_length
-from .validation import is_int
+from .validation import *
+from .globals import Globals
 
 def load_toml(file_path):
     try:
         return toml.load(file_path)
     except toml.decoder.TomlDecodeError as e:
         raise CerealPackException(file_path, 'TOML decode error: {}'.format(str(e)))
-
-def validate_uint32(file_path, val, err_desc):
-    if type(val) != int:
-        raise CerealPackException(file_path, '{} is not an integer'.format(err_desc))
-    if val < 0:
-        raise CerealPackException(file_path, '{} cannot be negative'.format(err_desc))
-    if val > 0xFFFFFFFF:
-        raise CerealPackException(file_path, '{} exceeds UINT32_MAX '.format(err_desc))
 
 def parse_globals(file_path):
     raw = load_toml(file_path)
@@ -28,10 +21,13 @@ def parse_globals(file_path):
         for name, val in raw['lengths'].items():
             validate_uint32(file_path, val, 'length ' + name)
 
+    if 'enums' in raw:
+        validate_enums(file_path, raw['enums'])
+
     if 'max_cereal_pack_serial_length' in raw:
         validate_uint32(file_path, raw['max_cereal_pack_serial_length'], '"max_cereal_pack_serial_length"')
 
-    return raw
+    return Globals(raw)
 
 def parse_schema(file_path, globals=None):
     raw = load_toml(file_path)
@@ -73,29 +69,14 @@ def parse_schema(file_path, globals=None):
     enums = {}
     if 'enums' in raw:
         enums = raw['enums']
-        if not isinstance(enums, dict):
-            raise CerealPackException(file_path, '"enums" should be a dictionary of enums where the key is the name of each enum')
-        for name, enum in enums.items():
-            if not isinstance(enum, dict):
-                raise CerealPackException(file_path, 'enum "{}" should be a dictionary'.format(name))
-
-            for val_name, val in enum.items():
-                err_pre = 'enum "{}.{}"'.format(name, val_name)
-                if not is_int(val):
-                    raise CerealPackException(file_path, err_pre, 'value must be an integer')
-                if int(val) < 0:
-                    raise CerealPackException(file_path, err_pre, 'value must be positive')
-            if len(set(enum.values())) != len(enum.values()):
-                raise CerealPackException(file_path, err_pre, 'enum "{}" values are not unique'.format(name))
-            if 0 not in map(lambda v: int(v), enum.values()):
-                raise CerealPackException(file_path, err_pre, 'enum "{}" must contain a `0` value, this is the default'.format(name))
+        validate_enums(file_path, enums)
 
     return schema.Schema(file_path, raw['name'], enums, raw['props'], namespace, order, globals)
 
 def load_schemas(files, globals_file=None):
     schemas = {}
 
-    globals = parse_globals(globals_file) if globals_file else None
+    globals = parse_globals(globals_file)
     for file in files:
         s = parse_schema(file, globals)
         if s.name_with_namespace in schemas:
@@ -138,16 +119,14 @@ def load_schemas(files, globals_file=None):
         except RecursionError:
             raise CerealPackException(schema.file_path, 'unable to resolve references due to circular reference')
 
-        if globals and 'max_cereal_pack_serial_length' in globals:
-            if schema.max_length() > globals['max_cereal_pack_serial_length']:
+        if globals.max_cereal_pack_serial_length:
+            if schema.max_length() > globals.max_cereal_pack_serial_length:
                 raise CerealPackException(
                     schema.file_path,
-                    'schema exceeds max length defined in "{}": {} > {}'.format(globals_file, schema.max_length(), globals['max_cereal_pack_serial_length'])
+                    'schema exceeds max length defined in "{}": {} > {}'.format(globals_file, schema.max_length(), globals.max_cereal_pack_serial_length)
                 )
 
-    if globals:
-        return schemas, globals
-    return schemas
+    return schemas, globals
 
 if __name__ == '__main__':
     import sys

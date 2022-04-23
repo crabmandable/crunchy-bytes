@@ -1,5 +1,17 @@
-max_cereal_pack_serial_length = 4096
+max_cereal_pack_serial_length = 8192
 
-lengths.max_item_length = 100
-lengths.max_name_length = 255
-lengths.max_elements = 10
+[lengths]
+max_item_length = 100
+max_name_length = 255
+max_elements = 10
+
+[enums]
+    [enums.continent]
+    unknown = 0
+    asia = 1
+    europe = 2
+    africa = 3
+    north_america = 4
+    south_america = 5
+    oceania = 6
+    antartica = 7

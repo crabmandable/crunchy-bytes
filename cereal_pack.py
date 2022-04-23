@@ -32,11 +32,9 @@ if __name__ == '__main__':
 
     pathlib.Path(args.out_dir).mkdir(exist_ok=True)
 
-    if globals:
-        with open(pathlib.Path(args.out_dir, 'cereal_pack_globals.hpp'), 'w') as file:
-            file.write(generate.globals_header(globals))
+    with open(pathlib.Path(args.out_dir, 'cereal_pack_globals.hpp'), 'w') as file:
+        file.write(generate.globals_header(globals, schemas))
 
-    # todo write globals to file
     for s in schemas.values():
         schema_dir = path_of_class(args.out_dir, s).parent
         schema_dir.mkdir(parents=True, exist_ok=True)
