@@ -1,9 +1,7 @@
 import re
 from .errors import CerealPackException
 from .property_types import property_types, length_length
-
-def is_int(val):
-    return type(val) == int or (type(val) == str and val.isnumeric())
+from .validation import is_int
 
 class Prop:
     def _is_global_length(self, val):
@@ -31,7 +29,7 @@ class Prop:
 
         return False
 
-    def __init__(self, file_path, name, dict, validate=True, globals=None):
+    def __init__(self, file_path, name, dict, enums, validate=True, globals=None):
         self.file_path = file_path
         self.dict = dict
         self.name = name
@@ -48,7 +46,7 @@ class Prop:
             if re.match('^\w+$', name) is None:
                 raise CerealPackException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
 
-            self.validate_prop(err_in, dict)
+            self.validate_prop(err_in, dict, enums)
 
         self.type = dict['type']
         property_type = property_types[self.type]
@@ -66,8 +64,8 @@ class Prop:
             self.reference = dict['reference']
 
         if self.type == 'enum':
-            # TODO global enums
-            self.enum = dict['enum']
+            # TODO globals
+            self.enum = enums[dict['enum']]
 
         if self.type == 'set':
             self.max_items = self._to_length_constant(dict['max_items'])
@@ -83,13 +81,13 @@ class Prop:
                     item_length = self._to_raw_length(dict['item']['max_length']) + item_type['encoding_length']
 
                 self.max_length = length_length + (self._to_raw_length(dict['max_items']) * item_length)
-                self.item_prop = Prop(self.file_path, self.name, dict['item'], validate=False, globals=globals)
+                self.item_prop = Prop(self.file_path, self.name, dict['item'], enums, validate=False, globals=globals)
 
         # ensure max length was set unless the property contains a reference
         if self.max_length is None and self.reference is None:
             raise CerealPackException(file_path, err_in, 'unable to determine max length of property')
 
-    def validate_prop(self, err_pre, prop_dict):
+    def validate_prop(self, err_pre, prop_dict, enums):
         # type
         if 'type' not in prop_dict:
             raise CerealPackException(self.file_path, err_pre, '"type" not defined')
@@ -101,22 +99,11 @@ class Prop:
 
         if type_to_validate == 'enum':
             if 'enum' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, 'enum property must contain an "enum"')
-            if type(prop_dict['enum']) == str:
-                # TODO global enums
-                raise Exception("oops")
-            elif isinstance(prop_dict['enum'], dict):
-                for val in prop_dict['enum'].values():
-                    if not is_int(val):
-                        raise CerealPackException(self.file_path, err_pre, '"enum" value must be an integer')
-                    if int(val) < 0:
-                        raise CerealPackException(self.file_path, err_pre, '"enum" value must be positive')
-                if len(set(prop_dict['enum'].values())) != len(prop_dict['enum'].values()):
-                    raise CerealPackException(self.file_path, err_pre, '"enum" values are not unique')
-                if 0 not in map(lambda v: int(v), prop_dict['enum'].values()):
-                    raise CerealPackException(self.file_path, err_pre, '"enum" must contain a `0` value, this is the default')
-            else:
-                raise CerealPackException(self.file_path, err_pre, 'enum property must contain an "enum" dictionary')
+                raise CerealPackException(self.file_path, err_pre, '"enum" key must contain an "enum"')
+            if type(prop_dict['enum']) != str:
+                raise CerealPackException(self.file_path, err_pre, '"enum" key must be the name of an enum')
+            if prop_dict['enum'] not in enums:
+                raise CerealPackException(self.file_path, err_pre, '"enum" key not found')
 
         # reference
         if type_to_validate == 'reference' and 'reference' not in prop_dict:
@@ -140,7 +127,7 @@ class Prop:
                 raise CerealPackException(self.file_path, err_pre, 'item of set property cannot be of type "set"')
 
             # validate item
-            self.validate_prop(err_pre + ' in "item" definition:', prop_dict['item'])
+            self.validate_prop(err_pre + ' in "item" definition:', prop_dict['item'], enums)
 
         # length
         if type(property_type['predefined_length']) != int and property_type['const_length']:
@@ -165,11 +152,12 @@ class Schema:
     def uses_globals(self):
         return any(map(lambda p: p.uses_globals(), self.props.values()))
 
-    def __init__(self, file_path, name, props, namespace=None, order=[], globals=None):
+    def __init__(self, file_path, name, enums, props, namespace=None, order=[], globals=None):
         self.order = order
         self.file_path = file_path
         self.name = name
         self.namespace = namespace
+        self.enums = enums
 
         if re.match('^\w+$', name) is None:
             raise CerealPackException(file_path,
@@ -184,7 +172,7 @@ class Schema:
         else:
             self.name_with_namespace = name
 
-        self.props = {p: Prop(file_path, p, props[p], globals=globals) for p in props}
+        self.props = {p: Prop(file_path, p, props[p], enums, globals=globals) for p in props}
         self.references = set([p.reference for _, p in self.props.items() if p.reference is not None])
 
         for o in self.order:

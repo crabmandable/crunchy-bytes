@@ -1,21 +1,28 @@
 name = "EnumExample"
 
+[enums]
+    [enums.numbers]
+    zero = 0
+    one = 1
+    two = 2
+    three = 3
+
+    [enums.state]
+    undefined = 0
+    pending = 1
+    working = 3
+    complete = 2
+
 [props]
     [props.simple_enum]
     type = "enum"
-    enum.zero = 0
-    enum.one = 1
-    enum.two = 2
-    enum.three = 3
+    enum = "numbers"
 
     [props.another_enum]
     type = "enum"
-    enum.zero = 0
-    enum.one = 1
-    enum.two = 2
-    enum.three = 3
+    enum = "numbers"
 
     [props.set_of_enums]
     type = "set"
     max_items = 4
-    item = { type = "enum", enum = { unspecified = 0, something = 1, more = 2 } }
+    item = { type = "enum", enum = "state" }

@@ -3,6 +3,7 @@ from . import schema
 import re
 from .errors import CerealPackException
 from .property_types import length_length
+from .validation import is_int
 
 def load_toml(file_path):
     try:
@@ -67,7 +68,29 @@ def parse_schema(file_path, globals=None):
             if not isinstance(o, str):
                 raise CerealPackException(file_path, 'top level property "order" should be an array of property names')
 
-    return schema.Schema(file_path, raw['name'], raw['props'], namespace, order, globals)
+
+    # validate enums
+    enums = {}
+    if 'enums' in raw:
+        enums = raw['enums']
+        if not isinstance(enums, dict):
+            raise CerealPackException(file_path, '"enums" should be a dictionary of enums where the key is the name of each enum')
+        for name, enum in enums.items():
+            if not isinstance(enum, dict):
+                raise CerealPackException(file_path, 'enum "{}" should be a dictionary'.format(name))
+
+            for val_name, val in enum.items():
+                err_pre = 'enum "{}.{}"'.format(name, val_name)
+                if not is_int(val):
+                    raise CerealPackException(file_path, err_pre, 'value must be an integer')
+                if int(val) < 0:
+                    raise CerealPackException(file_path, err_pre, 'value must be positive')
+            if len(set(enum.values())) != len(enum.values()):
+                raise CerealPackException(file_path, err_pre, 'enum "{}" values are not unique'.format(name))
+            if 0 not in map(lambda v: int(v), enum.values()):
+                raise CerealPackException(file_path, err_pre, 'enum "{}" must contain a `0` value, this is the default'.format(name))
+
+    return schema.Schema(file_path, raw['name'], enums, raw['props'], namespace, order, globals)
 
 def load_schemas(files, globals_file=None):
     schemas = {}
