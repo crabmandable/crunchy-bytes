@@ -116,11 +116,16 @@ def header_file(schema):
     enums = []
     for p in schema.props.values():
         # TODO skip global enums
-        if p.type != 'enum':
+        if p.type == 'enum':
+            enum = p.enum
+        elif p.type == 'set' and p.item_prop and p.item_prop.type == 'enum':
+            enum = p.item_prop.enum
+        else:
             continue
+
         e = enum_template.replace('$NAME$', p.name + '_t')
         values = []
-        for name, val in p.enum.items():
+        for name, val in enum.items():
             values.append('{} = {},'.format(name, val))
         e = replace_placeholder(e, 'VALUES', values)
         enums.append(e)

@@ -484,4 +484,11 @@ TEST_F(SettingAndGettingTest, SetEnums) {
     EXPECT_EQ(EnumExample::simple_enum_t::one, e.simple_enum().get());
     e.another_enum().set(EnumExample::another_enum_t::two);
     EXPECT_EQ(EnumExample::another_enum_t::two, e.another_enum().get());
+
+    e.set_of_enums().push_back(EnumExample::set_of_enums_t::more);
+    e.set_of_enums().push_back(EnumExample::set_of_enums_t::something);
+    e.set_of_enums().push_back(EnumExample::set_of_enums_t::unspecified);
+    EXPECT_EQ(EnumExample::set_of_enums_t::more, e.set_of_enums().get()[0]);
+    EXPECT_EQ(EnumExample::set_of_enums_t::something, e.set_of_enums().get()[1]);
+    EXPECT_EQ(EnumExample::set_of_enums_t::unspecified, e.set_of_enums().get()[2]);
 }

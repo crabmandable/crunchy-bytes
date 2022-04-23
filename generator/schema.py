@@ -83,7 +83,7 @@ class Prop:
                     item_length = self._to_raw_length(dict['item']['max_length']) + item_type['encoding_length']
 
                 self.max_length = length_length + (self._to_raw_length(dict['max_items']) * item_length)
-                self.item_prop = Prop(self.file_path, "", dict['item'], validate=False, globals=globals)
+                self.item_prop = Prop(self.file_path, self.name, dict['item'], validate=False, globals=globals)
 
         # ensure max length was set unless the property contains a reference
         if self.max_length is None and self.reference is None:
@@ -113,6 +113,8 @@ class Prop:
                         raise CerealPackException(self.file_path, err_pre, '"enum" value must be positive')
                 if len(set(prop_dict['enum'].values())) != len(prop_dict['enum'].values()):
                     raise CerealPackException(self.file_path, err_pre, '"enum" values are not unique')
+                if 0 not in map(lambda v: int(v), prop_dict['enum'].values()):
+                    raise CerealPackException(self.file_path, err_pre, '"enum" must contain a `0` value, this is the default')
             else:
                 raise CerealPackException(self.file_path, err_pre, 'enum property must contain an "enum" dictionary')
 
