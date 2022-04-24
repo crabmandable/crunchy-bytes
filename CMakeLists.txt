@@ -59,11 +59,5 @@ add_custom_command(
     COMMENT "Generating cereal_pack classes"
 )
 
-set(CEREAL_PACK_SOURCES "")
-file(GLOB_RECURSE CEREAL_PACK_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/cereal_pack.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/serialization/*.hpp")
-
-
-add_library(cereal_pack_interface INTERFACE ${CEREAL_PACK_SOURCES} ${GENERATED_FILES})
-target_include_directories(cereal_pack_interface INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CEREAL_PACK_OUTPUT_DIR})
+add_library(cereal_pack_interface INTERFACE ${GENERATED_FILES})
+target_include_directories(cereal_pack_interface INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/includes" "${CEREAL_PACK_OUTPUT_DIR}")

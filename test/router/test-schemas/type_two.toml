@@ -1,0 +1,12 @@
+name = "TypeTwo"
+
+[props]
+    [props.color_hex]
+    type = "string"
+    max_length = 7
+
+    [props.pos_x]
+    type = "uint64_t"
+
+    [props.pos_y]
+    type = "uint64_t"

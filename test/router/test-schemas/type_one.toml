@@ -1,0 +1,10 @@
+name = "TypeOne"
+
+[props]
+    [props.key]
+    type = "string"
+    max_length = 64
+
+    [props.value]
+    type = "const_length_buffer"
+    length = 32

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <cereal_pack.hpp>
+#include <cereal_pack/cereal_pack.hpp>
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
 #include <OneBool.hpp>
@@ -51,4 +51,18 @@ TEST_F(ConstantsTest, GlobalConstants) {
     EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_numbers_max_items);
     EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_names_max_items);
     EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_buffers_max_items);
+}
+
+TEST_F(ConstantsTest, SchemaNames) {
+    EXPECT_EQ(0, strcmp("cereal_pack_test::test::SimpleTest", SimpleTest::constants::schema_name));
+    SimpleTest s;
+    EXPECT_EQ(0, strcmp("cereal_pack_test::test::SimpleTest", s.schema_name()));
+
+    EXPECT_EQ(0, strcmp("cereal_pack_test::test::nesting::Nesting", Nesting::constants::schema_name));
+    Nesting n;
+    EXPECT_EQ(0, strcmp("cereal_pack_test::test::nesting::Nesting", n.schema_name()));
+
+    EXPECT_EQ(0, strcmp("OneBool", OneBool::constants::schema_name));
+    OneBool ob;
+    EXPECT_EQ(0, strcmp("OneBool", ob.schema_name()));
 }

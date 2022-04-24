@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <cereal_pack.hpp>
+#include <cereal_pack/cereal_pack.hpp>
 
 using namespace cereal_pack;
 

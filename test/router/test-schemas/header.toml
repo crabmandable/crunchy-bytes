@@ -1,0 +1,9 @@
+name = "Header"
+
+[props]
+    [props.name]
+    type = "string"
+    max_length = 64
+
+    [props.body_length]
+    type = "uint32_t"

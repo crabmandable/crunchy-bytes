@@ -3,7 +3,7 @@ header_template = """
 #define __$HEADERGUARD$__
 
 #include <vector>
-#include "cereal_pack.hpp"
+#include "cereal_pack/cereal_pack.hpp"
 
 $INCLUDES$
 
@@ -11,6 +11,7 @@ $NAMESPACE_START$
 class $NAME$ : public cereal_pack::Schema {
     public:
         struct constants {
+            static constexpr const char * schema_name = "$NAME_WITH_NAMESPACE$";
             $CONSTANTS$
             private:
                 constants();
@@ -21,6 +22,10 @@ class $NAME$ : public cereal_pack::Schema {
     public:
         $NAME$() = default;
         $NAME$($NAME$ &&) = default;
+
+        const char * const schema_name() const override {
+            return constants::schema_name;
+        };
 
         explicit $NAME$(const void* buffer) {
             deserialize(buffer);

@@ -51,6 +51,8 @@ namespace cereal_pack {
             const Property* property_at(unsigned int index) const {
                 return properties().at(index);
             }
+
+            virtual const char* const schema_name() const = 0;
         private:
             virtual const std::vector<Property*>& properties() const = 0;
     };

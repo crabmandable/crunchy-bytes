@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <cereal_pack.hpp>
+#include <cereal_pack/cereal_pack.hpp>
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
 #include <OneBool.hpp>

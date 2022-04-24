@@ -43,6 +43,7 @@ def header_file(schema):
     template = header_template
     # schema name
     template = template.replace("$NAME$", schema.name)
+    template = template.replace("$NAME_WITH_NAMESPACE$", schema.name_with_namespace)
     template = template.replace("$HEADERGUARD$", schema.name_with_namespace.upper().replace("::", "_") + "_H")
 
     # namespace
