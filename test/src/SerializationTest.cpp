@@ -3,6 +3,7 @@
 #include <cereal_pack_test/test/SimpleTest.hpp>
 #include <cereal_pack_test/test/nesting/Nesting.hpp>
 #include <OneBool.hpp>
+#include <EnumExample.hpp>
 
 using namespace cereal_pack_test::test;
 using namespace cereal_pack_test::test::nesting;
@@ -119,4 +120,26 @@ TEST_F(SerializationTest, SerializeNested) {
     EXPECT_EQ(len, 189 * 3 + 3 + 4 * 2);
 
     EXPECT_EQ(inNest, outNest);
+}
+
+TEST_F(SerializationTest, SerializeEnums) {
+    EnumExample in;
+    in.simple_enum().set(EnumExample::numbers::one);
+    in.another_enum().set(EnumExample::numbers::two);
+    in.set_of_enums().push_back(EnumExample::state::pending);
+    in.set_of_enums().push_back(EnumExample::state::undefined);
+    in.set_of_enums().push_back(EnumExample::state::working);
+    in.set_of_enums().push_back(EnumExample::state::complete);
+
+    std::array<uint8_t, EnumExample::constants::max_serial_length> buff;
+
+    auto len = in.serialize(buff.data());
+    EXPECT_EQ(len, in.serial_length());
+
+    EnumExample out;
+    out.deserialize(buff.data());
+
+    EXPECT_EQ(out.simple_enum(), in.simple_enum());
+    EXPECT_EQ(out.another_enum(), in.another_enum());
+    EXPECT_EQ(out.set_of_enums(), in.set_of_enums());
 }
