@@ -11,10 +11,10 @@ name = "TypeThree"
     type = "uint64_t"
 
     [props.scale_x]
-    type = "uint64_t"
+    type = "double"
 
     [props.scale_y]
-    type = "uint64_t"
+    type = "double"
 
     [props.scale_z]
-    type = "uint64_t"
+    type = "double"

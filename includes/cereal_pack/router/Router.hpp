@@ -9,11 +9,10 @@ namespace cereal_pack {
     namespace router {
         struct IngestedHeader {
             uint32_t header_length;
-            uint32_t total_length;
             std::string schema_name;
 
-            IngestedHeader(uint32_t header_length, uint32_t total_length, std::string schema_name) :
-                header_length(header_length), total_length(total_length), schema_name(schema_name)
+            IngestedHeader(uint32_t header_length, std::string schema_name) :
+                header_length(std::move(header_length)), schema_name(std::move(schema_name))
             {}
         };
 
@@ -27,12 +26,10 @@ namespace cereal_pack {
                 bool attatch_route(std::function<void(const T&)> callback) {
                     return m_handlers.insert({
                         T::constants::schema_name,
-                        {
-                            T::constants::max_serial_length, [callback](uint8_t* data) {
-                                T schema;
-                                schema.deserialize(data);
-                                callback(schema);
-                            }
+                        [callback](uint8_t* data) {
+                            T schema;
+                            schema.deserialize(data);
+                            callback(schema);
                         }
                     }).second;
                 }
@@ -44,15 +41,11 @@ namespace cereal_pack {
                         return false;
                     }
                     auto handler = m_handlers[ingested.schema_name];
-                    if (ingested.total_length - ingested.header_length > handler.first) {
-                        // TODO real error
-                        throw "Oopsy";
-                    }
-                    handler.second(data + ingested.header_length);
+                    handler(data + ingested.header_length);
                     return true;
                 }
             private:
-                using hander_t = std::pair<uint32_t, std::function<void(uint8_t*)>>;
+                using hander_t = std::function<void(uint8_t*)>;
                 std::unordered_map<std::string, hander_t> m_handlers;
                 std::function<IngestedHeader(Header)> ingeset_header;
         };
