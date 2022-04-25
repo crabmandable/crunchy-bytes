@@ -11,7 +11,8 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 set(CEREAL_PACK_SCHEMA_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/header.toml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/enum_header.toml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/name_header.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/type_one.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/type_two.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/type_three.toml"

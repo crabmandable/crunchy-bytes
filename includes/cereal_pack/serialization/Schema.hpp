@@ -15,28 +15,28 @@ namespace cereal_pack {
                 }
             }
 
-            size_t serialize(void* buffer) const {
+            uint32_t serialize(void* buffer) const {
                 unsigned int pos = 0;
                 for (auto* p : properties()) {
                     pos += p->serialize((uint8_t*)buffer + pos);
                 }
                 return pos;
             }
-            size_t deserialize(const void* buffer) {
+            uint32_t deserialize(const void* buffer) {
                 unsigned int pos = 0;
                 for (auto* p : properties()) {
                     pos += p->deserialize((uint8_t*)buffer + pos);
                 }
                 return pos;
             }
-            size_t max_serial_length() const {
+            uint32_t max_serial_length() const {
                 unsigned int accum = 0;
                 for (auto* p : properties()) {
                     accum += p->max_serial_length();
                 }
                 return accum;
             }
-            size_t serial_length() const {
+            uint32_t serial_length() const {
                 unsigned int accum = 0;
                 for (auto* p : properties()) {
                     accum += p->serial_length();
@@ -44,7 +44,7 @@ namespace cereal_pack {
                 return accum;
             }
 
-            size_t number_of_properties() const {
+            uint32_t number_of_properties() const {
                 return properties().size();
             }
 

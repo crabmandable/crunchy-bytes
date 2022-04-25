@@ -8,7 +8,7 @@
 #include <cstring>
 
 namespace cereal_pack {
-    template <size_t max_string_length>
+    template <uint32_t max_string_length>
     class String: public Property {
         public:
             String() = default;
@@ -43,12 +43,12 @@ namespace cereal_pack {
                 m_value = "";
             }
 
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 strcpy((char*)buffer, m_value.c_str());
                 return serial_length();
             }
 
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 const char* c = (const char*)buffer;
                 while (*(c++)) {
                     unsigned int len = c - (const char*)buffer;
@@ -61,11 +61,11 @@ namespace cereal_pack {
                 return serial_length();
             }
 
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 return max_string_length + 1;
             }
 
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 return 1 + m_value.size();
             }
 

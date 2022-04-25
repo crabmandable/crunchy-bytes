@@ -35,21 +35,21 @@ namespace cereal_pack {
                 m_value = (T)0;
             }
 
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 memcpy(buffer, &m_value, sizeof(m_value));
                 return sizeof(T);
             };
 
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 memcpy(&m_value, buffer, sizeof(m_value));
                 return sizeof(T);
             };
 
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 return sizeof(T);
             }
 
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 return sizeof(T);
             }
 

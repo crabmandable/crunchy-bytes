@@ -9,7 +9,7 @@
 #include <array>
 
 namespace cereal_pack {
-    template <size_t length>
+    template <uint32_t length>
     class ConstLengthBuffer: public Property {
         public:
             ConstLengthBuffer() {
@@ -62,21 +62,21 @@ namespace cereal_pack {
                 std::fill(m_value.begin(), m_value.end(), 0);
             }
 
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 memcpy(buffer, m_value.data(), length);
                 return length;
             }
 
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 memcpy(m_value.data(), buffer, length);
                 return length;
             }
 
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 return length;
             }
 
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 return length;
             }
 
@@ -92,7 +92,7 @@ namespace cereal_pack {
 
             const uint8_t* get() const { return m_value.data(); }
 
-            constexpr size_t size() {
+            constexpr uint32_t size() {
                 return length;
             }
 

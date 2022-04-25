@@ -9,7 +9,7 @@
 #include <cstring>
 
 namespace cereal_pack {
-    template <size_t max_buffer_length>
+    template <uint32_t max_buffer_length>
     class DynamicLengthBuffer: public Property {
         public:
             DynamicLengthBuffer() = default;
@@ -54,13 +54,13 @@ namespace cereal_pack {
                 m_value.clear();
             }
 
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 *(uint32_t*)buffer = m_value.size();
                 memcpy((uint8_t*)buffer + sizeof(uint32_t), m_value.data(), m_value.size());
                 return serial_length();
             }
 
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 uint32_t l = *(uint32_t*)buffer;
                 if (!length_is_valid(l)) {
                     throw CerealPackException("Unable to deserialize `DynamicLengthBuffer`, length exceeds max length");
@@ -70,11 +70,11 @@ namespace cereal_pack {
                 return serial_length();
             }
 
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 return max_buffer_length + sizeof(uint32_t);
             }
 
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 return sizeof(uint32_t) + m_value.size();
             }
 

@@ -37,16 +37,16 @@ namespace cereal_pack {
             virtual void reset() override {
                 m_value.reset();
             }
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 return m_value.serialize(buffer);
             }
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 return m_value.deserialize(buffer);
             }
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 return m_value.max_serial_length();
             }
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 return m_value.serial_length();
             }
             void set(const T& value) {

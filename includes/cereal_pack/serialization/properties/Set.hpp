@@ -12,7 +12,7 @@
 namespace cereal_pack {
     template<typename T> class Reference;
 
-    template<class T, size_t max_items>
+    template<class T, uint32_t max_items>
     class Set : public Property {
         static_assert(std::is_base_of<Property, T>::value, "Set property must be a set of other properties");
 
@@ -41,7 +41,7 @@ namespace cereal_pack {
                 m_value.clear();
             }
 
-            virtual size_t serialize(void* buffer) const override {
+            virtual uint32_t serialize(void* buffer) const override {
                 *(uint32_t*)buffer = m_value.size();
                 uint8_t* pos = (uint8_t*)buffer + sizeof(uint32_t);
                 for (const auto& item : m_value) {
@@ -50,7 +50,7 @@ namespace cereal_pack {
                 return pos - (uint8_t*)buffer;
             }
 
-            virtual size_t deserialize(const void* buffer) override {
+            virtual uint32_t deserialize(const void* buffer) override {
                 uint32_t items = *(uint32_t*)buffer;
                 if (!number_of_items_is_valid(items)) {
                     throw CerealPackException("Unable to deserialize `Set`, number of items exceeds max length");
@@ -64,12 +64,12 @@ namespace cereal_pack {
                 return pos - (uint8_t*)buffer;
             }
 
-            virtual size_t max_serial_length() const override {
+            virtual uint32_t max_serial_length() const override {
                 T t;
                 return t.max_serial_length() * max_items + sizeof(uint32_t);
             }
 
-            virtual size_t serial_length() const override {
+            virtual uint32_t serial_length() const override {
                 unsigned int accum = 0;
                 for (auto& item: m_value) {
                     accum += item.serial_length();
@@ -125,7 +125,7 @@ namespace cereal_pack {
                 return m_value;
             }
 
-            const auto& operator[](size_t pos) const {
+            const auto& operator[](uint32_t pos) const {
                 if constexpr (is_templated_from<T, Reference>::value) {
                     return m_value[pos].get();
                 } else {
@@ -133,7 +133,7 @@ namespace cereal_pack {
                 }
             }
 
-            auto& operator[](size_t pos) {
+            auto& operator[](uint32_t pos) {
                 if constexpr (is_templated_from<T, Reference>::value) {
                     return m_value[pos].get();
                 } else {
@@ -141,7 +141,7 @@ namespace cereal_pack {
                 }
             }
 
-            void resize(size_t length) {
+            void resize(uint32_t length) {
                 if (!number_of_items_is_valid(length)) {
                     throw CerealPackException("Unable to resize `Set`, number of items exceeds max length");
                 }

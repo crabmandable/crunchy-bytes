@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <cereal_pack/cereal_pack.hpp>
 #include <cereal_pack/router/Router.hpp>
-#include <Header.hpp>
+#include <NameHeader.hpp>
 #include <TypeOne.hpp>
 #include <TypeTwo.hpp>
 #include <TypeThree.hpp>
@@ -11,7 +11,7 @@ using namespace cereal_pack::router;
 
 std::array<uint8_t, 32> fake_data;
 
-class RouterTest : public ::testing::Test {
+class BasicRouterTest : public ::testing::Test {
 protected:
     void SetUp() override {
         std::fill(fake_data.begin(), fake_data.end(), 0xEF);
@@ -22,7 +22,7 @@ protected:
 
     template<class T>
     std::vector<uint8_t> make_message(const T& body) {
-        Header header;
+        NameHeader header;
         header.body_length().set(body.serial_length());
         header.name().set(body.schema_name());
 
@@ -34,15 +34,12 @@ protected:
     }
 };
 
-IngestedHeader ingest_header(Header h) {
-    return router::IngestedHeader(
-        h.serial_length(),
-        h.name().get()
-    );
+std::string ingest_header(const NameHeader& h) {
+    return h.name().get();
 };
 
-TEST_F(RouterTest, BasicRouting) {
-    Router<Header> router {ingest_header};
+TEST_F(BasicRouterTest, BasicRouting) {
+    BasicRouter<NameHeader> router {ingest_header};
     bool called = false;
     bool attatched = router.attatch_route<TypeOne>([&called](const TypeOne& body) {
         EXPECT_EQ(body.key().get(), "yalla");
@@ -62,8 +59,8 @@ TEST_F(RouterTest, BasicRouting) {
     EXPECT_TRUE(called);
 }
 
-TEST_F(RouterTest, RoutingWithMultipleRoutes) {
-    Router<Header> router {ingest_header};
+TEST_F(BasicRouterTest, RoutingWithMultipleRoutes) {
+    BasicRouter<NameHeader> router {ingest_header};
     bool typeOneCalled = false;
     bool attatched = router.attatch_route<TypeOne>([&typeOneCalled](const TypeOne& body) {
         EXPECT_EQ(body.key().get(), "yalla");
@@ -117,14 +114,14 @@ TEST_F(RouterTest, RoutingWithMultipleRoutes) {
     EXPECT_TRUE(typeThreeCalled);
 }
 
-TEST_F(RouterTest, AttatchDuplicateRouteReturnsFalse) {
-    Router<Header> router {ingest_header};
+TEST_F(BasicRouterTest, AttatchDuplicateRouteReturnsFalse) {
+    BasicRouter<NameHeader> router {ingest_header};
     EXPECT_TRUE(router.attatch_route<TypeOne>([](const TypeOne&) { }));
     EXPECT_FALSE(router.attatch_route<TypeOne>([](const TypeOne&) { }));
 }
 
-TEST_F(RouterTest, UnhandledMessageReturnsFalse) {
-    Router<Header> router {ingest_header};
+TEST_F(BasicRouterTest, UnhandledMessageReturnsFalse) {
+    BasicRouter<NameHeader> router {ingest_header};
     TypeOne oneBody;
     auto msg = make_message(oneBody);
     EXPECT_FALSE(router.handle_message(msg.data()));

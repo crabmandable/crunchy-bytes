@@ -1,0 +1,17 @@
+name = "EnumHeader"
+
+[enums]
+    [enums.body_t]
+    unknown = 0
+    type_one = 1
+    type_two = 2
+    type_three = 3
+
+
+[props]
+    [props.body_type]
+    type = "enum"
+    enum = "body_t"
+
+    [props.body_length]
+    type = "uint32_t"
