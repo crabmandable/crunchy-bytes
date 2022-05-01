@@ -87,7 +87,6 @@ g++ main.cpp -I./cereal_pack -I./generated-classes -o my_program
 ```
 
 ## Usage
-### TODO
 ### Generated C++ Schemas
 The generated C++ schemas are more or less containers for lists of properties.
 Each property on the class translates into a getter method which will return a
@@ -176,6 +175,18 @@ box.brand().set("Kollogs Quran Flakes");
 CerealBox same_size_box;
 same_size_box.box_dimensions() = box.box_dimensions();
 same_size_box.brand().set("Commander Crunch");
+```
+
+#### Serialization
+You probably don't need it explained to you that you can `serialize` and `deserialize`
+`cereal_pack` schemas.
+```C++
+CerealBox box;
+// TODO: set some of the properties
+uint32_t length_written = box.serialize(buffer);
+
+// Some time later...
+uint32_t length_read = another_box.deserialize(buffer);
 ```
 
 #### Constants
