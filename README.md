@@ -212,6 +212,7 @@ schema.
 
 E.g. for this schema
 ```toml
+namespace = "inventory"
 name = "CerealStock"
 [props]
     [props.barcodes]
@@ -230,6 +231,8 @@ name = "CerealStock"
 
 The `constants` will look like this:
 ```C++
+static constexpr const char * schema_name = "inventory::CerealStock";
+static constexpr size_t max_serial_length = 3292;
 static constexpr size_t barcodes_max_items = 100;
 static constexpr size_t barcodes_item_max_length = 32;
 static constexpr size_t version_hash_max_length = 16;
@@ -238,6 +241,7 @@ static constexpr size_t signature_max_length = 72;
 
 And then using it:
 ```C++
+using namespace inventory;
 CerealStock stock;
 load_stock(stock);
 
