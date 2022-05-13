@@ -257,6 +257,17 @@ for (auto& barcode: stock.barcodes().get()) {
     }
 }
 ```
+### Globals
+The generated code will _always_ include a file called `cereal_pack_globals.hpp`.
+
+This will include the namespace `cereal_pack::globals`, containing constants &
+definitions. By default the only thing in here will be `max_cereal_pack_serial_length`,
+but you can add to this by supplying a global definitions file.
+
+Globals can also be used to avoid repeating constant & enum definitions in multiple
+schema files.
+
+[More detail on globals can be found here](./docs/GLOBALS.md)
 
 ### Router
 `cereal_pack` provides a router class that can be used to work with messages

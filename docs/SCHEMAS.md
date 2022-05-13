@@ -92,6 +92,41 @@ max_length = 255
 ```
 
 ___
+#### Enum
+An `enum` type shouuld be fairly self explanatory. It is a field that can hold
+one of a discreet set of values, encoded as a `uint32_t`. The enum can either be
+defined within the schema, or defined globally ([see cereal_pack globals](./GLOBALS.md)). The
+enum should be defined separately to the property, and then set as the properties
+"enum"
+
+It is represented by a `cereal_pack::Primitive<T>` in the generated schema,
+where T is the enum type.
+
+E.g.
+```toml
+[enums]
+[enums.grain_t]
+# there MUST be a `0` value, and it will be used as the default
+unknown = 0
+oats = 1
+wheat = 2
+# the values do not have to be continuous
+spelt = 5
+# or in any particular order
+barley = 4
+einkorn = 6
+
+[props]
+[props.grain]
+type = "enum"
+enum = "grain_t"
+
+# the same enum can be used for multiple properties
+[props.grain_two]
+type = "enum"
+enum = "grain_t"
+```
+___
 #### Reference
 A `reference` type can _refer_ to any other schema. This is represented by a
 `cereal_pack::Reference<T>`, where `T` is the schema being referenced.
@@ -109,7 +144,7 @@ reference = "crabmandable::MyCoolSchema"
 ```
 
 ___
-#### Sets
+#### Set
 A `set` property is an array of any _other_ property type.
 This could be a set of primitives, buffers, strings, or references. The `set`
 must be given a `max_items` and should contain an `item` dictionary defining the
