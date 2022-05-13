@@ -12,6 +12,8 @@ You bring the data definitions, and `cereal_pack` will generate C++ classes that
 `serialize` and `deserialize` themselves into a compact binary representation that
 can be easily be transferred between processes.
 
+`cereal_pack` is ideal for IPC, or long term data storage
+
 ## Getting Started
 ### Requirements
 `python3` and the `toml` package for python
@@ -306,7 +308,7 @@ However, if you need something _small & simple_, for C++ _only_, then maybe `cer
 can work for you. Due to a slightly simpler design `cereal_pack` has a handful of advantages
 
 #### It's tiny & embedded friendly
-* The core library that supports the generated C++ classes is very small (~60Kb compiled)
+* The core library that supports the generated C++ classes is _very_ small
 
 * It's header only, including the generated classes
 
@@ -317,6 +319,15 @@ can work for you. Due to a slightly simpler design `cereal_pack` has a handful o
 #### Max sizes
 Every `cereal_pack` schema has a _maximum_ size when serialized. Having a determinate
 amount of memory required makes code safer & simpler.
+
+And the generated code can always tell you how much space you need to buffer any
+of your schemas
+```C++
+std::array<uint8_t, cereal_pack::globals::max_cereal_pack_serial_length> msgBuffer;
+```
+
+This can make message handling logic very simple, as you can ensure a each packet
+contains an entire message.
 
 #### MIT License
 This permissive license means you can take this library and build on top of it
