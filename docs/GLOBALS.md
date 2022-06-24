@@ -15,7 +15,7 @@ Sometimes lengths or enums might need to be shared between multiple schemas. In
 order to facilitate this you can supply a file with global definitions
 that can be referenced in your schemas.
 
-##### Using Make
+##### Using CMake
 You can define a globals file to use by setting the cmake variable `CEREAL_PACK_GLOBALS`
 ```cmake
 set(CEREAL_PACK_GLOBALS "${CMAKE_CURRENT_SOURCE_DIR}/cereal_pack_globals.toml")

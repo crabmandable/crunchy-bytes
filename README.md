@@ -326,7 +326,7 @@ of your schemas
 std::array<uint8_t, cereal_pack::globals::max_cereal_pack_serial_length> msgBuffer;
 ```
 
-This can make message handling logic very simple, as you can ensure a each packet
+This can make message handling logic very simple, as you can ensure each packet
 contains an entire message.
 
 #### MIT License
