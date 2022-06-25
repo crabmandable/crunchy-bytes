@@ -1,14 +1,14 @@
-#ifndef _CEREAL_PACK_DYNAMICLENGTHBUFFER_HPP_
-#define _CEREAL_PACK_DYNAMICLENGTHBUFFER_HPP_
+#ifndef _CRUNCHY_BYTES_DYNAMICLENGTHBUFFER_HPP_
+#define _CRUNCHY_BYTES_DYNAMICLENGTHBUFFER_HPP_
 
 #include "Property.hpp"
-#include "../CerealPackException.hpp"
+#include "../CrunchyBytesException.hpp"
 #include <stdint.h>
 #include <vector>
 #include <array>
 #include <cstring>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     template <uint32_t max_buffer_length>
     class DynamicLengthBuffer: public Property {
         public:
@@ -17,7 +17,7 @@ namespace cereal_pack {
             template < template < class ... > class Container, class ... Args >
             DynamicLengthBuffer(const Container<uint8_t, Args...>& data) {
                 if (!length_is_valid(data.size())) {
-                    throw CerealPackException("Unable to construct `DynamicLengthBuffer`, container exceeds max length");
+                    throw CrunchyBytesException("Unable to construct `DynamicLengthBuffer`, container exceeds max length");
                 }
                 m_value.resize(max_buffer_length);
                 std::fill(m_value.begin(), m_value.end(), 0);
@@ -63,7 +63,7 @@ namespace cereal_pack {
             virtual uint32_t deserialize(const void* buffer) override {
                 uint32_t l = *(uint32_t*)buffer;
                 if (!length_is_valid(l)) {
-                    throw CerealPackException("Unable to deserialize `DynamicLengthBuffer`, length exceeds max length");
+                    throw CrunchyBytesException("Unable to deserialize `DynamicLengthBuffer`, length exceeds max length");
                 }
                 resize(l);
                 memcpy(m_value.data(), (uint8_t*)buffer + sizeof(uint32_t), l);
@@ -80,7 +80,7 @@ namespace cereal_pack {
 
             void set(uint8_t* data, unsigned int length) {
                 if (!length_is_valid(length)) {
-                    throw CerealPackException("Unable to set `DynamicLengthBuffer`, length exceeds max length");
+                    throw CrunchyBytesException("Unable to set `DynamicLengthBuffer`, length exceeds max length");
                 }
                 resize(length);
                 memcpy(data, m_value.data(), length);
@@ -92,7 +92,7 @@ namespace cereal_pack {
 
             void set(std::vector<uint8_t>&& data) {
                 if (!length_is_valid(data.size())) {
-                    throw CerealPackException("Unable to set `DynamicLengthBuffer`, container size exceeds max length");
+                    throw CrunchyBytesException("Unable to set `DynamicLengthBuffer`, container size exceeds max length");
                 }
                 m_value = data;
             }
@@ -121,4 +121,4 @@ namespace cereal_pack {
     };
 };
 
-#endif //_CEREAL_PACK_DYNAMICLENGTHBUFFER_HPP_
+#endif //_CRUNCHY_BYTES_DYNAMICLENGTHBUFFER_HPP_

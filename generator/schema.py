@@ -1,5 +1,5 @@
 import re
-from .errors import CerealPackException
+from .errors import CrunchyBytesException
 from .property_types import property_types, length_length
 from .validation import is_int
 
@@ -43,7 +43,7 @@ class Prop:
 
         if validate:
             if re.match('^\w+$', name) is None:
-                raise CerealPackException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
+                raise CrunchyBytesException(file_path, err_in, '"name" of property must only use alphanumeric characters and underscore, "{}" given'.format(name))
 
             self.validate_prop(err_in, dict, enums)
 
@@ -66,7 +66,7 @@ class Prop:
             if dict['enum'] in enums:
                 self.enum =  dict['enum']
             elif dict['enum'] in self.globals.enums:
-                self.enum = 'cereal_pack::globals::' + dict['enum']
+                self.enum = 'crunchy_bytes::globals::' + dict['enum']
 
         if self.type == 'set':
             self.max_items = self._to_length_constant(dict['max_items'])
@@ -86,48 +86,48 @@ class Prop:
 
         # ensure max length was set unless the property contains a reference
         if self.max_length is None and self.reference is None:
-            raise CerealPackException(file_path, err_in, 'unable to determine max length of property')
+            raise CrunchyBytesException(file_path, err_in, 'unable to determine max length of property')
 
     def validate_prop(self, err_pre, prop_dict, enums):
         # type
         if 'type' not in prop_dict:
-            raise CerealPackException(self.file_path, err_pre, '"type" not defined')
+            raise CrunchyBytesException(self.file_path, err_pre, '"type" not defined')
         if prop_dict['type'] not in property_types:
-            raise CerealPackException(self.file_path, err_pre, 'unknown property type "{}"'.format(prop_dict['type']))
+            raise CrunchyBytesException(self.file_path, err_pre, 'unknown property type "{}"'.format(prop_dict['type']))
 
         type_to_validate = prop_dict['type']
         property_type = property_types[type_to_validate]
 
         if type_to_validate == 'enum':
             if 'enum' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, '"enum" key must contain an "enum"')
+                raise CrunchyBytesException(self.file_path, err_pre, '"enum" key must contain an "enum"')
             if type(prop_dict['enum']) != str:
-                raise CerealPackException(self.file_path, err_pre, '"enum" key must be the name of an enum')
+                raise CrunchyBytesException(self.file_path, err_pre, '"enum" key must be the name of an enum')
             if prop_dict['enum'] not in enums and prop_dict['enum'] not in self.globals.enums:
-                raise CerealPackException(self.file_path, err_pre, '"enum" key not found')
+                raise CrunchyBytesException(self.file_path, err_pre, '"enum" key not found')
 
         # reference
         if type_to_validate == 'reference' and 'reference' not in prop_dict:
-            raise CerealPackException(self.file_path, err_pre, 'reference property must contain a "reference"')
+            raise CrunchyBytesException(self.file_path, err_pre, 'reference property must contain a "reference"')
 
         # set
         if type_to_validate == 'set':
             # item
             if 'item' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, 'set property must contain an "item"')
+                raise CrunchyBytesException(self.file_path, err_pre, 'set property must contain an "item"')
 
             # max_items
             if 'max_items' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, 'set property must contain a "max_items"')
+                raise CrunchyBytesException(self.file_path, err_pre, 'set property must contain a "max_items"')
             if type(prop_dict['max_items']) is str:
                 if not self._is_global_length(prop_dict['max_items']):
-                    raise CerealPackException(self.file_path, err_pre, 'set property "max_items" is an unknown name. Expected a global length name')
+                    raise CrunchyBytesException(self.file_path, err_pre, 'set property "max_items" is an unknown name. Expected a global length name')
             elif not is_int(prop_dict['max_items']):
-                raise CerealPackException(self.file_path, err_pre, 'set property must contain an integer "max_items" or a string name of a global length')
+                raise CrunchyBytesException(self.file_path, err_pre, 'set property must contain an integer "max_items" or a string name of a global length')
 
             # don't allow a set to contain a set
             if 'type' in prop_dict['item'] and prop_dict['item']['type'] == 'set':
-                raise CerealPackException(self.file_path, err_pre, 'item of set property cannot be of type "set"')
+                raise CrunchyBytesException(self.file_path, err_pre, 'item of set property cannot be of type "set"')
 
             # validate item
             self.validate_prop(err_pre + ' in "item" definition:', prop_dict['item'], enums)
@@ -135,20 +135,20 @@ class Prop:
         # length
         if type(property_type['predefined_length']) != int and property_type['const_length']:
             if 'length' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, '{} property must contain a "length"'.format(type_to_validate))
+                raise CrunchyBytesException(self.file_path, err_pre, '{} property must contain a "length"'.format(type_to_validate))
             if type(prop_dict['length']) is str:
                 if not self._is_global_length(prop_dict['length']):
-                    raise CerealPackException(self.file_path, err_pre, '{} property "length" is an unknown name. Expected a global length name'.format(type_to_validate))
+                    raise CrunchyBytesException(self.file_path, err_pre, '{} property "length" is an unknown name. Expected a global length name'.format(type_to_validate))
             elif not is_int(prop_dict['length']):
-                raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "length" or a string name of a global length'.format(type_to_validate))
+                raise CrunchyBytesException(self.file_path, err_pre, '{} property must contain an integer "length" or a string name of a global length'.format(type_to_validate))
 
         # max_length
         if property_type['variable_length']:
             if 'max_length' not in prop_dict:
-                raise CerealPackException(self.file_path, err_pre, '{} property must contain a "max_length"'.format(type_to_validate))
+                raise CrunchyBytesException(self.file_path, err_pre, '{} property must contain a "max_length"'.format(type_to_validate))
             if not is_int(prop_dict['max_length']):
                 if not self._is_global_length(prop_dict['max_length']):
-                    raise CerealPackException(self.file_path, err_pre, '{} property must contain an integer "max_length"'.format(type_to_validate))
+                    raise CrunchyBytesException(self.file_path, err_pre, '{} property must contain an integer "max_length"'.format(type_to_validate))
 
     def __str__(self):
         return str(self.dict)
@@ -165,12 +165,12 @@ class Schema:
         self.enums = enums
 
         if re.match('^\w+$', name) is None:
-            raise CerealPackException(file_path,
+            raise CrunchyBytesException(file_path,
                     '"name" must only contain alphanumeric and underscore charchters')
 
         if namespace:
             if re.match('^\w+(::\w+)*$', namespace) is None:
-                raise CerealPackException(file_path,
+                raise CrunchyBytesException(file_path,
                         '"namespace" must only contain alphanumeric and underscore charchters, and "::"')
 
             self.name_with_namespace = namespace + "::" + name
@@ -182,11 +182,11 @@ class Schema:
 
         for o in self.order:
             if o not in props:
-                raise CerealPackException(file_path,
+                raise CrunchyBytesException(file_path,
                         'order array contains "{}" which is not a property in this schema'.format(o))
 
         if len(self.order) != len(set(self.order)):
-            raise CerealPackException(file_path, 'order array contains duplicates'.format(o))
+            raise CrunchyBytesException(file_path, 'order array contains duplicates'.format(o))
 
     def max_length(self):
         if None in [p.max_length for _, p in self.props.items()]:

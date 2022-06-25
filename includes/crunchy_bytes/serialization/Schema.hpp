@@ -1,12 +1,12 @@
-#ifndef _CEREAL_PACK_SCHEMA_HPP_
-#define _CEREAL_PACK_SCHEMA_HPP_
+#ifndef CRUNCHY_BYTES_SCHEMA_HPP_
+#define CRUNCHY_BYTES_SCHEMA_HPP_
 
 #include <vector>
 #include "properties/Property.hpp"
 #include <stdint.h>
 #include <stddef.h>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     class Schema {
         public:
             void reset() {
@@ -57,4 +57,4 @@ namespace cereal_pack {
             virtual const std::vector<Property*>& properties() const = 0;
     };
 };
-#endif //_CEREAL_PACK_SCHEMA_HPP_
+#endif //CRUNCHY_BYTES_SCHEMA_HPP_

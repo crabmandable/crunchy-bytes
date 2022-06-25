@@ -1,11 +1,11 @@
-#ifndef _CEREAL_PACK_ROUTER_HPP_
-#define _CEREAL_PACK_ROUTER_HPP_
+#ifndef _CRUNCHY_BYTES_ROUTER_HPP_
+#define _CRUNCHY_BYTES_ROUTER_HPP_
 #include <unordered_map>
 #include <functional>
 #include <stdint.h>
 #include <string>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     namespace router {
         template<class Header, typename SchemaKey=std::string>
         class Router {
@@ -64,4 +64,4 @@ namespace cereal_pack {
         };
     };
 };
-#endif //_CEREAL_PACK_ROUTER_HPP_
+#endif //_CRUNCHY_BYTES_ROUTER_HPP_

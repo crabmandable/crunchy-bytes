@@ -1,10 +1,10 @@
-#ifndef _CEREAL_PACK_PRIMITIVE_HPP_
-#define _CEREAL_PACK_PRIMITIVE_HPP_
+#ifndef _CRUNCHY_BYTES_PRIMITIVE_HPP_
+#define _CRUNCHY_BYTES_PRIMITIVE_HPP_
 #include "Property.hpp"
 #include <type_traits>
 #include <cstring>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     template<class T>
     class Primitive : public Property {
         static_assert(std::is_fundamental<T>::value || std::is_enum<T>::value,
@@ -60,4 +60,4 @@ namespace cereal_pack {
     };
 };
 
-#endif //_CEREAL_PACK_PRIMITIVE_HPP_
+#endif //_CRUNCHY_BYTES_PRIMITIVE_HPP_

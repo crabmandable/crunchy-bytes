@@ -1,4 +1,4 @@
-namespace = "cereal_pack_test::test"
+namespace = "crunchy_bytes_test::test"
 name = "SimpleTest"
 
 order = ['string', 'boolean', 'uint8', 'dynamic_length_buffer']

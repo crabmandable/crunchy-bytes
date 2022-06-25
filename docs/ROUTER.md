@@ -1,8 +1,8 @@
 ### Router
-`cereal_pack` provides a router class that can be used to work with messages
-created with `cereal_pack`. It is small and simple to use
+`crunchy_bytes` provides a router class that can be used to work with messages
+created with `crunchy_bytes`. It is small and simple to use
 ```C++
-using namespace cereal_pack::router;
+using namespace crunchy_bytes::router;
 BasicRouter<MyCustomHeader> r([] (const MyCustomHeader& h) { return h.body_name().get(); });
 
 r.attatch_route<ImportantEvent>([](const ImportantEvent& event) {
@@ -14,12 +14,12 @@ r.attatch_route<UrgentEvent>([](const UrgentEvent& event) {
 });
 
 while (true) {
-    std::vector<uint8_t> cereal_data = read_ipc();
-    r.handle_message(cereal_data.data());
+    std::vector<uint8_t> crunchy_data = read_ipc();
+    r.handle_message(crunchy_data.data());
 }
 ```
 It's up to you to define how you want your message headers to look,
-you just need to tell `cereal_pack` how to read your header.
+you just need to tell `crunchy_bytes` how to read your header.
 
 First, create a new schema that will serve as your header:
 ```toml
@@ -42,9 +42,9 @@ name = "MyCustomHeader"
 
 ```
 
-Now in your C++ code, create a `cereal_pack::router::BasicRouter<MyCustomHeader>`
+Now in your C++ code, create a `crunchy_bytes::router::BasicRouter<MyCustomHeader>`
 ```C++
-using namespace cereal_pack::router;
+using namespace crunchy_bytes::router;
 BasicRouter<MyCustomHeader> router([] (const MyCustomHeader& header) {
     // this callback defines how the router should get the body_name property
     // from our custom header

@@ -1,13 +1,13 @@
-#ifndef _CEREAL_PACK_STRING_HPP_
-#define _CEREAL_PACK_STRING_HPP_
+#ifndef _CRUNCHY_BYTES_STRING_HPP_
+#define _CRUNCHY_BYTES_STRING_HPP_
 
 #include "Property.hpp"
-#include "../CerealPackException.hpp"
+#include "../CrunchyBytesException.hpp"
 #include <stdint.h>
 #include <string>
 #include <cstring>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     template <uint32_t max_string_length>
     class String: public Property {
         public:
@@ -53,7 +53,7 @@ namespace cereal_pack {
                 while (*(c++)) {
                     unsigned int len = c - (const char*)buffer;
                     if (!length_is_valid(len)) {
-                        throw CerealPackException("Unable to deserialize `String`, it exceeds max length");
+                        throw CrunchyBytesException("Unable to deserialize `String`, it exceeds max length");
                     }
 
                 }
@@ -71,7 +71,7 @@ namespace cereal_pack {
 
             void set(const std::string& str) {
                 if (!length_is_valid(str.size())) {
-                    throw CerealPackException("Unable to set `String`, it exceeds max length");
+                    throw CrunchyBytesException("Unable to set `String`, it exceeds max length");
                 }
                 m_value = str;
             }
@@ -94,4 +94,4 @@ namespace cereal_pack {
     };
 };
 
-#endif //_CEREAL_PACK_STRING_HPP_
+#endif //_CRUNCHY_BYTES_STRING_HPP_

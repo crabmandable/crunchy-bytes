@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <cereal_pack/cereal_pack.hpp>
+#include <crunchy_bytes/crunchy_bytes.hpp>
 
-using namespace cereal_pack;
+using namespace crunchy_bytes;
 
 class ExceptionTest : public ::testing::Test {
     void SetUp() override {
@@ -12,12 +12,12 @@ class ExceptionTest : public ::testing::Test {
 
 TEST_F(ExceptionTest, ConstructingConstLengthBuffer) {
     std::vector<uint8_t> vec {1, 2, 3};
-    EXPECT_THROW(ConstLengthBuffer<2> cb {vec} , CerealPackException);
+    EXPECT_THROW(ConstLengthBuffer<2> cb {vec} , CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, ConstructingDynamicLengthBuffer) {
     std::vector<uint8_t> vec {1, 2, 3};
-    EXPECT_THROW(DynamicLengthBuffer<2> db {vec} , CerealPackException);
+    EXPECT_THROW(DynamicLengthBuffer<2> db {vec} , CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, DeserializingDynamicLengthBuffer) {
@@ -28,21 +28,21 @@ TEST_F(ExceptionTest, DeserializingDynamicLengthBuffer) {
     db1.serialize(buff.data());
 
     DynamicLengthBuffer<2> db2;
-    EXPECT_THROW(db2.deserialize(buff.data()), CerealPackException);
+    EXPECT_THROW(db2.deserialize(buff.data()), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, SetDynamicLengthBufferFromPointer) {
     std::vector<uint8_t> vec;
     vec.resize(100);
     DynamicLengthBuffer<2> db;
-    EXPECT_THROW(db.set(vec.data(), vec.size()), CerealPackException);
+    EXPECT_THROW(db.set(vec.data(), vec.size()), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, SetDynamicLengthBufferFromContainer) {
     std::vector<uint8_t> vec;
     vec.resize(100);
     DynamicLengthBuffer<2> db;
-    EXPECT_THROW(db.set(vec), CerealPackException);
+    EXPECT_THROW(db.set(vec), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, DeserializingSet) {
@@ -54,44 +54,44 @@ TEST_F(ExceptionTest, DeserializingSet) {
     s1.serialize(buff.data());
 
     Set<Primitive<uint32_t>, 1> s2;
-    EXPECT_THROW(s2.deserialize(buff.data()), CerealPackException);
+    EXPECT_THROW(s2.deserialize(buff.data()), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, SetSet) {
     Set<Primitive<uint32_t>, 2> s;
     std::vector<uint32_t> vec1 {1, 2, 3, 4};
-    EXPECT_THROW(s.set(vec1), CerealPackException);
+    EXPECT_THROW(s.set(vec1), CrunchyBytesException);
     std::vector<Primitive<uint32_t>> vec2 {1, 2, 3, 4};
-    EXPECT_THROW(s.set(vec2), CerealPackException);
+    EXPECT_THROW(s.set(vec2), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, PushBackSet) {
     Set<Primitive<uint32_t>, 2> s;
     s.push_back(1);
     s.push_back(2);
-    EXPECT_THROW(s.push_back(3), CerealPackException);
+    EXPECT_THROW(s.push_back(3), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, EmplaceBackSet) {
     Set<Primitive<uint32_t>, 2> s;
     s.emplace_back(1);
     s.emplace_back(2);
-    EXPECT_THROW(s.emplace_back(3), CerealPackException);
+    EXPECT_THROW(s.emplace_back(3), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, ResizeSet) {
     Set<Primitive<uint32_t>, 2> s;
-    EXPECT_THROW(s.resize(3), CerealPackException);
+    EXPECT_THROW(s.resize(3), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, DeserializeString) {
     String<2> s;
     std::string str = "Hello";
-    EXPECT_THROW(s.deserialize(str.c_str()), CerealPackException);
+    EXPECT_THROW(s.deserialize(str.c_str()), CrunchyBytesException);
 }
 
 TEST_F(ExceptionTest, SetString) {
     String<2> s;
     std::string str = "Hello";
-    EXPECT_THROW(s.set(str), CerealPackException);
+    EXPECT_THROW(s.set(str), CrunchyBytesException);
 }

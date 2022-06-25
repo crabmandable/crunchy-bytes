@@ -1,7 +1,7 @@
 import toml
 from . import schema
 import re
-from .errors import CerealPackException
+from .errors import CrunchyBytesException
 from .property_types import length_length
 from .validation import *
 from .globals import Globals
@@ -10,22 +10,22 @@ def load_toml(file_path):
     try:
         return toml.load(file_path)
     except toml.decoder.TomlDecodeError as e:
-        raise CerealPackException(file_path, 'TOML decode error: {}'.format(str(e)))
+        raise CrunchyBytesException(file_path, 'TOML decode error: {}'.format(str(e)))
 
 def parse_globals(file_path):
     raw = load_toml(file_path)
 
     if 'lengths' in raw:
         if not isinstance(raw['lengths'], dict):
-            raise CerealPackException(file_path, 'expected "lengths" to be a dictionary')
+            raise CrunchyBytesException(file_path, 'expected "lengths" to be a dictionary')
         for name, val in raw['lengths'].items():
             validate_uint32(file_path, val, 'length ' + name)
 
     if 'enums' in raw:
         validate_enums(file_path, raw['enums'])
 
-    if 'max_cereal_pack_serial_length' in raw:
-        validate_uint32(file_path, raw['max_cereal_pack_serial_length'], '"max_cereal_pack_serial_length"')
+    if 'max_crunchy_bytes_serial_length' in raw:
+        validate_uint32(file_path, raw['max_crunchy_bytes_serial_length'], '"max_crunchy_bytes_serial_length"')
 
     return Globals(raw)
 
@@ -33,22 +33,22 @@ def parse_schema(file_path, globals=None):
     raw = load_toml(file_path)
 
     if 'name' not in raw:
-        raise CerealPackException(file_path, 'top level field "name" not found')
+        raise CrunchyBytesException(file_path, 'top level field "name" not found')
 
     if not isinstance(raw['name'], str):
-        raise CerealPackException(file_path, 'top level field "name" is not a string')
+        raise CrunchyBytesException(file_path, 'top level field "name" is not a string')
 
     if 'props' not in raw:
-        raise CerealPackException(file_path, 'top level field "props" not found')
+        raise CrunchyBytesException(file_path, 'top level field "props" not found')
 
     if not isinstance(raw['props'], dict):
-        raise CerealPackException(file_path, 'top level field "props" is not a dictionary')
+        raise CrunchyBytesException(file_path, 'top level field "props" is not a dictionary')
 
     if 'namespace' in raw and not isinstance(raw['namespace'], str):
-        raise CerealPackException(file_path, 'top level field "namespace" is not a string')
+        raise CrunchyBytesException(file_path, 'top level field "namespace" is not a string')
 
     if 'order' in raw and not isinstance(raw['order'], list):
-        raise CerealPackException(file_path, 'top level field "order" is not an array')
+        raise CrunchyBytesException(file_path, 'top level field "order" is not an array')
 
     name = raw['name']
     props = raw['props']
@@ -62,7 +62,7 @@ def parse_schema(file_path, globals=None):
         order = raw['order']
         for o in order:
             if not isinstance(o, str):
-                raise CerealPackException(file_path, 'top level property "order" should be an array of property names')
+                raise CrunchyBytesException(file_path, 'top level property "order" should be an array of property names')
 
 
     # validate enums
@@ -80,14 +80,14 @@ def load_schemas(files, globals_file=None):
     for file in files:
         s = parse_schema(file, globals)
         if s.name_with_namespace in schemas:
-            raise CerealPackException(s.file_path, 'Schema has same name as "{}"'.format(schemas[s.name_with_namespace].file_path))
+            raise CrunchyBytesException(s.file_path, 'Schema has same name as "{}"'.format(schemas[s.name_with_namespace].file_path))
         schemas[s.name_with_namespace] = s
 
     # resolve references
     for schema in schemas.values():
         for ref_name in schema.references:
             if ref_name not in schemas:
-                raise CerealPackException(schema.file_path, 'unable to resolve reference to "{}"'.format(ref_name))
+                raise CrunchyBytesException(schema.file_path, 'unable to resolve reference to "{}"'.format(ref_name))
 
             reference = schemas[ref_name]
 
@@ -117,13 +117,13 @@ def load_schemas(files, globals_file=None):
         try:
             resolve_max_length(schema)
         except RecursionError:
-            raise CerealPackException(schema.file_path, 'unable to resolve references due to circular reference')
+            raise CrunchyBytesException(schema.file_path, 'unable to resolve references due to circular reference')
 
-        if globals.max_cereal_pack_serial_length:
-            if schema.max_length() > globals.max_cereal_pack_serial_length:
-                raise CerealPackException(
+        if globals.max_crunchy_bytes_serial_length:
+            if schema.max_length() > globals.max_crunchy_bytes_serial_length:
+                raise CrunchyBytesException(
                     schema.file_path,
-                    'schema exceeds max length defined in "{}": {} > {}'.format(globals_file, schema.max_length(), globals.max_cereal_pack_serial_length)
+                    'schema exceeds max length defined in "{}": {} > {}'.format(globals_file, schema.max_length(), globals.max_crunchy_bytes_serial_length)
                 )
 
     return schemas, globals

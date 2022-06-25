@@ -1,9 +1,9 @@
-#ifndef _CEREAL_PACK_PROPERTY_HPP_
-#define _CEREAL_PACK_PROPERTY_HPP_
+#ifndef _CRUNCHY_BYTES_PROPERTY_HPP_
+#define _CRUNCHY_BYTES_PROPERTY_HPP_
 #include <stddef.h>
 #include <stdint.h>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     class Property {
         public:
             virtual void reset() = 0;
@@ -13,4 +13,4 @@ namespace cereal_pack {
             virtual uint32_t serial_length() const = 0;
     };
 };
-#endif //_CEREAL_PACK_PROPERTY_HPP_
+#endif //_CRUNCHY_BYTES_PROPERTY_HPP_

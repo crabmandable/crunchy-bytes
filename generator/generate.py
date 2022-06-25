@@ -10,7 +10,7 @@ def _length_to_const(length):
     if type(length) == int:
         return str(length)
     elif type(length) == tuple:
-        return "cereal_pack::globals::" + length[0]
+        return "crunchy_bytes::globals::" + length[0]
     else:
         raise Exception("Invalid length: {}".format(length))
 
@@ -18,11 +18,11 @@ def globals_header(globals, schemas):
     template = globals_template
     global_defs = []
 
-    if globals.max_cereal_pack_serial_length:
-        max_cereal_pack_serial_length = globals.max_cereal_pack_serial_length
+    if globals.max_crunchy_bytes_serial_length:
+        max_crunchy_bytes_serial_length = globals.max_crunchy_bytes_serial_length
     else:
-        max_cereal_pack_serial_length = max(map(lambda s: s.max_length(), schemas.values()))
-    global_defs.append('constexpr uint32_t max_cereal_pack_serial_length = {};'.format(max_cereal_pack_serial_length))
+        max_crunchy_bytes_serial_length = max(map(lambda s: s.max_length(), schemas.values()))
+    global_defs.append('constexpr uint32_t max_crunchy_bytes_serial_length = {};'.format(max_crunchy_bytes_serial_length))
 
     for name, val in globals.lengths.items():
         global_defs.append('constexpr uint32_t {} = {};'.format(name, val))
@@ -122,7 +122,7 @@ def header_file(schema):
     # includes
     to_include = ['#include "{}.hpp"'.format(i.replace("::", "/")) for i in schema.references]
     if schema.uses_globals():
-        to_include.append('#include "cereal_pack_globals.hpp"')
+        to_include.append('#include "crunchy_bytes_globals.hpp"')
     template = replace_placeholder(template, 'INCLUDES', to_include)
 
     # enums

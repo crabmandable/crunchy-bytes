@@ -1,12 +1,12 @@
-#ifndef _CEREAL_PACK_REFERENCE_HPP_
-#define _CEREAL_PACK_REFERENCE_HPP_
+#ifndef _CRUNCHY_BYTES_REFERENCE_HPP_
+#define _CRUNCHY_BYTES_REFERENCE_HPP_
 
 #include "Property.hpp"
 #include <type_traits>
 
 class Schema;
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     template <class T>
     class Reference : public Property {
         static_assert(std::is_base_of<Schema, T>::value, "Reference must refer to a schema");
@@ -66,4 +66,4 @@ namespace cereal_pack {
     };
 };
 
-#endif //_CEREAL_PACK_REFERENCE_HPP_
+#endif //_CRUNCHY_BYTES_REFERENCE_HPP_

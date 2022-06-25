@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
-#include <cereal_pack/cereal_pack.hpp>
-#include <cereal_pack_test/test/SimpleTest.hpp>
-#include <cereal_pack_test/test/nesting/Nesting.hpp>
+#include <crunchy_bytes/crunchy_bytes.hpp>
+#include <crunchy_bytes_test/test/SimpleTest.hpp>
+#include <crunchy_bytes_test/test/nesting/Nesting.hpp>
 #include <OneBool.hpp>
 
-using namespace cereal_pack_test::test;
-using namespace cereal_pack_test::test::nesting;
+using namespace crunchy_bytes_test::test;
+using namespace crunchy_bytes_test::test::nesting;
 class EqualityTest : public ::testing::Test {
 protected:
     void SetUp() override {

@@ -3,12 +3,12 @@ header_template = """
 #define __$HEADERGUARD$__
 
 #include <vector>
-#include "cereal_pack/cereal_pack.hpp"
+#include "crunchy_bytes/crunchy_bytes.hpp"
 
 $INCLUDES$
 
 $NAMESPACE_START$
-class $NAME$ : public cereal_pack::Schema {
+class $NAME$ : public crunchy_bytes::Schema {
     public:
         struct constants {
             static constexpr const char * schema_name = "$NAME_WITH_NAMESPACE$";
@@ -53,10 +53,10 @@ class $NAME$ : public cereal_pack::Schema {
 
         $GETTERS$
     private:
-        const std::vector<cereal_pack::Property*> m_properties = {
+        const std::vector<crunchy_bytes::Property*> m_properties = {
             $PROPERTY_PTRS$
         };
-        virtual const std::vector<cereal_pack::Property*>& properties() const override {
+        virtual const std::vector<crunchy_bytes::Property*>& properties() const override {
             return m_properties;
         }
 };
@@ -96,12 +96,12 @@ enum_template = """
 """
 
 globals_template = """
-#ifndef __CEREAL_PACK_GLOBALS_H__
-#define __CEREAL_PACK_GLOBALS_H__
-namespace cereal_pack {
+#ifndef __CRUNCHY_BYTES_GLOBALS_H__
+#define __CRUNCHY_BYTES_GLOBALS_H__
+namespace crunchy_bytes {
     namespace globals {
         $GLOBALS$
     };
 };
-#endif // __CEREAL_PACK_GLOBALS_H__
+#endif // __CRUNCHY_BYTES_GLOBALS_H__
 """

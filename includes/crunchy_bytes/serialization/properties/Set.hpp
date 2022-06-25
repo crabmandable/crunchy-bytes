@@ -1,15 +1,15 @@
-#ifndef _CEREAL_PACK_SET_HPP_
-#define _CEREAL_PACK_SET_HPP_
+#ifndef _CRUNCHY_BYTES_SET_HPP_
+#define _CRUNCHY_BYTES_SET_HPP_
 
 #include "Property.hpp"
-#include "../CerealPackException.hpp"
+#include "../CrunchyBytesException.hpp"
 #include <type_traits>
 #include <vector>
 #include <array>
 #include <stdint.h>
 #include <stddef.h>
 
-namespace cereal_pack {
+namespace crunchy_bytes {
     template<typename T> class Reference;
 
     template<class T, uint32_t max_items>
@@ -53,7 +53,7 @@ namespace cereal_pack {
             virtual uint32_t deserialize(const void* buffer) override {
                 uint32_t items = *(uint32_t*)buffer;
                 if (!number_of_items_is_valid(items)) {
-                    throw CerealPackException("Unable to deserialize `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to deserialize `Set`, number of items exceeds max length");
                 }
                 resize(items);
                 const uint8_t* pos = (uint8_t*)buffer + sizeof(uint32_t);
@@ -79,7 +79,7 @@ namespace cereal_pack {
 
             void set(const std::vector<T>& data) {
                 if (!number_of_items_is_valid(data.size())) {
-                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = data;
             }
@@ -89,7 +89,7 @@ namespace cereal_pack {
                 static_assert(std::is_convertible<A, T>::value,
                   "Expected `Container` to contain elements convertible to `T`");
                 if (!number_of_items_is_valid(data.size())) {
-                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = {data.begin(), data.end()};
             }
@@ -100,7 +100,7 @@ namespace cereal_pack {
                   "Expected `Container` to contain elements convertible to `T`");
 
                 if (!number_of_items_is_valid(data.size())) {
-                    throw CerealPackException("Unable to set `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to set `Set`, number of items exceeds max length");
                 }
                 m_value = {data.begin(), data.end()};
             }
@@ -108,7 +108,7 @@ namespace cereal_pack {
             template <typename... Args>
             auto push_back(Args&&... args) {
                 if (!number_of_items_is_valid(1 + m_value.size())) {
-                    throw CerealPackException("Unable to `push_back` item to `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to `push_back` item to `Set`, number of items exceeds max length");
                 }
                 return m_value.push_back(std::forward<Args>(args)...);
             }
@@ -116,7 +116,7 @@ namespace cereal_pack {
             template <typename... Args>
             auto emplace_back(Args&&... args) {
                 if (!number_of_items_is_valid(1 + m_value.size())) {
-                    throw CerealPackException("Unable to `emplace_back` item to `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to `emplace_back` item to `Set`, number of items exceeds max length");
                 }
                 return m_value.emplace_back(std::forward<Args>(args)...);
             }
@@ -143,7 +143,7 @@ namespace cereal_pack {
 
             void resize(uint32_t length) {
                 if (!number_of_items_is_valid(length)) {
-                    throw CerealPackException("Unable to resize `Set`, number of items exceeds max length");
+                    throw CrunchyBytesException("Unable to resize `Set`, number of items exceeds max length");
                 }
                 m_value.resize(length);
             }
@@ -169,4 +169,4 @@ namespace cereal_pack {
             std::vector<T> m_value;
     };
 }
-#endif //_CEREAL_PACK_SET_HPP_
+#endif //_CRUNCHY_BYTES_SET_HPP_

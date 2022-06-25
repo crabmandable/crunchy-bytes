@@ -7,7 +7,7 @@ def path_of_class(root, schema):
     return pathlib.Path(root, *schema.name_with_namespace.split('::')[:-1], schema.name + '.hpp')
 
 if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser(description='Generate cereal pack c++ classes from a list of schemas.')
+    arg_parser = argparse.ArgumentParser(description='Generate crunchy bytes c++ classes from a list of schemas.')
 
     arg_parser.add_argument('--schemas', '-s', metavar='schema', nargs='+', required=True,
                         help='schema files to genearte classes from')
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     pathlib.Path(args.out_dir).mkdir(exist_ok=True)
 
-    with open(pathlib.Path(args.out_dir, 'cereal_pack_globals.hpp'), 'w') as file:
+    with open(pathlib.Path(args.out_dir, 'crunchy_bytes_globals.hpp'), 'w') as file:
         file.write(generate.globals_header(globals, schemas))
 
     for s in schemas.values():

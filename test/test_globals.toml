@@ -1,4 +1,4 @@
-max_cereal_pack_serial_length = 8192
+max_crunchy_bytes_serial_length = 8192
 
 [lengths]
 max_item_length = 100

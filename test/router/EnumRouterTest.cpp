@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include <cereal_pack/cereal_pack.hpp>
-#include <cereal_pack/router/Router.hpp>
+#include <crunchy_bytes/crunchy_bytes.hpp>
+#include <crunchy_bytes/router/Router.hpp>
 #include <EnumHeader.hpp>
 #include <TypeTwo.hpp>
 #include <TypeTwo.hpp>
 #include <TypeThree.hpp>
 
-using namespace cereal_pack;
-using namespace cereal_pack::router;
+using namespace crunchy_bytes;
+using namespace crunchy_bytes::router;
 
 class EnumRouterTest : public ::testing::Test {
 protected:

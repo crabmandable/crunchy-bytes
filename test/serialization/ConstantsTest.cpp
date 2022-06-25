@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include <cereal_pack/cereal_pack.hpp>
-#include <cereal_pack_test/test/SimpleTest.hpp>
-#include <cereal_pack_test/test/nesting/Nesting.hpp>
+#include <crunchy_bytes/crunchy_bytes.hpp>
+#include <crunchy_bytes_test/test/SimpleTest.hpp>
+#include <crunchy_bytes_test/test/nesting/Nesting.hpp>
 #include <OneBool.hpp>
 #include <UsingGlobals.hpp>
 
-using namespace cereal_pack_test::test;
-using namespace cereal_pack_test::test::nesting;
-using namespace cereal_pack;
+using namespace crunchy_bytes_test::test;
+using namespace crunchy_bytes_test::test::nesting;
+using namespace crunchy_bytes;
 
 class ConstantsTest : public ::testing::Test {
 protected:
@@ -36,31 +36,31 @@ TEST_F(ConstantsTest, Constants) {
 };
 
 TEST_F(ConstantsTest, GlobalConstants) {
-    EXPECT_EQ(8192, cereal_pack::globals::max_cereal_pack_serial_length);
+    EXPECT_EQ(8192, crunchy_bytes::globals::max_crunchy_bytes_serial_length);
 
-    EXPECT_EQ(10, cereal_pack::globals::max_elements);
-    EXPECT_EQ(100, cereal_pack::globals::max_item_length);
-    EXPECT_EQ(255, cereal_pack::globals::max_name_length);
+    EXPECT_EQ(10, crunchy_bytes::globals::max_elements);
+    EXPECT_EQ(100, crunchy_bytes::globals::max_item_length);
+    EXPECT_EQ(255, crunchy_bytes::globals::max_name_length);
 
-    EXPECT_EQ(cereal_pack::globals::max_item_length, UsingGlobals::constants::data_one_max_length);
-    EXPECT_EQ(cereal_pack::globals::max_item_length, UsingGlobals::constants::data_two_max_length);
-    EXPECT_EQ(cereal_pack::globals::max_name_length, UsingGlobals::constants::name_max_length);
-    EXPECT_EQ(cereal_pack::globals::max_name_length, UsingGlobals::constants::some_list_of_names_item_max_length);
-    EXPECT_EQ(cereal_pack::globals::max_item_length, UsingGlobals::constants::some_list_of_buffers_item_max_length);
+    EXPECT_EQ(crunchy_bytes::globals::max_item_length, UsingGlobals::constants::data_one_max_length);
+    EXPECT_EQ(crunchy_bytes::globals::max_item_length, UsingGlobals::constants::data_two_max_length);
+    EXPECT_EQ(crunchy_bytes::globals::max_name_length, UsingGlobals::constants::name_max_length);
+    EXPECT_EQ(crunchy_bytes::globals::max_name_length, UsingGlobals::constants::some_list_of_names_item_max_length);
+    EXPECT_EQ(crunchy_bytes::globals::max_item_length, UsingGlobals::constants::some_list_of_buffers_item_max_length);
 
-    EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_numbers_max_items);
-    EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_names_max_items);
-    EXPECT_EQ(cereal_pack::globals::max_elements, UsingGlobals::constants::some_list_of_buffers_max_items);
+    EXPECT_EQ(crunchy_bytes::globals::max_elements, UsingGlobals::constants::some_list_of_numbers_max_items);
+    EXPECT_EQ(crunchy_bytes::globals::max_elements, UsingGlobals::constants::some_list_of_names_max_items);
+    EXPECT_EQ(crunchy_bytes::globals::max_elements, UsingGlobals::constants::some_list_of_buffers_max_items);
 }
 
 TEST_F(ConstantsTest, SchemaNames) {
-    EXPECT_EQ(0, strcmp("cereal_pack_test::test::SimpleTest", SimpleTest::constants::schema_name));
+    EXPECT_EQ(0, strcmp("crunchy_bytes_test::test::SimpleTest", SimpleTest::constants::schema_name));
     SimpleTest s;
-    EXPECT_EQ(0, strcmp("cereal_pack_test::test::SimpleTest", s.schema_name()));
+    EXPECT_EQ(0, strcmp("crunchy_bytes_test::test::SimpleTest", s.schema_name()));
 
-    EXPECT_EQ(0, strcmp("cereal_pack_test::test::nesting::Nesting", Nesting::constants::schema_name));
+    EXPECT_EQ(0, strcmp("crunchy_bytes_test::test::nesting::Nesting", Nesting::constants::schema_name));
     Nesting n;
-    EXPECT_EQ(0, strcmp("cereal_pack_test::test::nesting::Nesting", n.schema_name()));
+    EXPECT_EQ(0, strcmp("crunchy_bytes_test::test::nesting::Nesting", n.schema_name()));
 
     EXPECT_EQ(0, strcmp("OneBool", OneBool::constants::schema_name));
     OneBool ob;

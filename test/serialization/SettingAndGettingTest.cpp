@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <OneBool.hpp>
-#include <cereal_pack/cereal_pack.hpp>
-#include <cereal_pack_test/test/SimpleTest.hpp>
-#include <cereal_pack_test/test/nesting/Nesting.hpp>
+#include <crunchy_bytes/crunchy_bytes.hpp>
+#include <crunchy_bytes_test/test/SimpleTest.hpp>
+#include <crunchy_bytes_test/test/nesting/Nesting.hpp>
 #include <UsingGlobals.hpp>
 #include <EnumExample.hpp>
 
@@ -16,13 +16,13 @@ protected:
 };
 
 TEST_F(SettingAndGettingTest, CanConstructGeneratedClasses) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     OneBool b;
-    cereal_pack_test::test::nesting::Nesting n;
+    crunchy_bytes_test::test::nesting::Nesting n;
 }
 
 TEST_F(SettingAndGettingTest, MaxLengthsMatch) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
 
     EXPECT_EQ(s.max_serial_length(), SimpleTest::constants::max_serial_length);
@@ -32,7 +32,7 @@ TEST_F(SettingAndGettingTest, MaxLengthsMatch) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetBool) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.boolean().set(false);
     EXPECT_FALSE(s.boolean().get());
     s.boolean().set(true);
@@ -40,7 +40,7 @@ TEST_F(SettingAndGettingTest, CanSetBool) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetString) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.string().set("Wow it's a string");
     EXPECT_EQ(s.string().get(), "Wow it's a string");
     s.string().set("Wow it's still a string");
@@ -48,7 +48,7 @@ TEST_F(SettingAndGettingTest, CanSetString) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetUint8) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.uint8().set(32);
     EXPECT_EQ(s.uint8().get(), 32);
     s.uint8().set(251);
@@ -56,7 +56,7 @@ TEST_F(SettingAndGettingTest, CanSetUint8) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetInt8) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.int8().set(32);
     EXPECT_EQ(s.int8().get(), 32);
     s.int8().set(-4);
@@ -64,7 +64,7 @@ TEST_F(SettingAndGettingTest, CanSetInt8) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetUint16) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.uint16().set(1450);
     EXPECT_EQ(s.uint16().get(), 1450);
     s.uint16().set(251);
@@ -72,7 +72,7 @@ TEST_F(SettingAndGettingTest, CanSetUint16) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetInt16) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.int16().set(1450);
     EXPECT_EQ(s.int16().get(), 1450);
     s.int16().set(-4);
@@ -80,7 +80,7 @@ TEST_F(SettingAndGettingTest, CanSetInt16) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetUint32) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.uint32().set(242424242);
     EXPECT_EQ(s.uint32().get(), 242424242);
     s.uint32().set(251);
@@ -88,7 +88,7 @@ TEST_F(SettingAndGettingTest, CanSetUint32) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetInt32) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.int32().set(242424242);
     EXPECT_EQ(s.int32().get(), 242424242);
     s.int32().set(-4);
@@ -97,7 +97,7 @@ TEST_F(SettingAndGettingTest, CanSetInt32) {
 
 
 TEST_F(SettingAndGettingTest, CanSetUint64) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.uint64().set(32);
     EXPECT_EQ(s.uint64().get(), 32);
     s.uint64().set(324425555225252252);
@@ -105,7 +105,7 @@ TEST_F(SettingAndGettingTest, CanSetUint64) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetInt64) {
-    cereal_pack_test::test::SimpleTest s;
+    crunchy_bytes_test::test::SimpleTest s;
     s.int64().set(324425555225252252);
     EXPECT_EQ(s.int64().get(), 324425555225252252);
     s.int64().set(-4);
@@ -113,7 +113,7 @@ TEST_F(SettingAndGettingTest, CanSetInt64) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetConstLengthBuffer) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
 
     std::vector<uint8_t> buff;
@@ -138,7 +138,7 @@ TEST_F(SettingAndGettingTest, CanSetConstLengthBuffer) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetDynamicLengthBuffer) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
 
     std::vector<uint8_t> buff;
@@ -174,7 +174,7 @@ TEST_F(SettingAndGettingTest, CanSetDynamicLengthBuffer) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetReference) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
     OneBool b;
     b.boolean().set(true);
@@ -185,14 +185,14 @@ TEST_F(SettingAndGettingTest, CanSetReference) {
     s.reference() = std::move(b);
     EXPECT_FALSE(s.reference().boolean().get());
 
-    cereal_pack::Reference<OneBool> bRef;
+    crunchy_bytes::Reference<OneBool> bRef;
     bRef.get().boolean().set(true);
     s.reference() = bRef;
     EXPECT_TRUE(s.reference().boolean().get());
 }
 
 TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
     s.set_of_bools().set({false, true, true});
     EXPECT_EQ(3, s.set_of_bools().get().size());
@@ -210,7 +210,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
     ASSERT_EQ(0, s.set_of_bools().size());
 
     s.set_of_bools().push_back(true);
-    cereal_pack::Primitive<bool> b;
+    crunchy_bytes::Primitive<bool> b;
     b.set(false);
     s.set_of_bools().push_back(b);
     s.set_of_bools().push_back(false);
@@ -224,7 +224,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
     ASSERT_EQ(0, s.set_of_bools().size());
 
     s.set_of_bools().emplace_back(true);
-    cereal_pack::Primitive<bool> b2;
+    crunchy_bytes::Primitive<bool> b2;
     b2.set(false);
     s.set_of_bools().emplace_back(b2);
     s.set_of_bools().emplace_back(false);
@@ -236,7 +236,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfPrimitives) {
 }
 
 TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
 
     std::vector<OneBool> refs;
@@ -251,7 +251,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
     EXPECT_FALSE(s.set_of_references()[1].boolean());
     EXPECT_TRUE(s.set_of_references()[2].boolean());
 
-    std::vector<cereal_pack::Reference<OneBool>> refs2;
+    std::vector<crunchy_bytes::Reference<OneBool>> refs2;
     refs2.resize(3);
     refs2[0].get().boolean().set(true);
     refs2[1].get().boolean().set(false);
@@ -266,7 +266,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
     s.set_of_references().reset();
     ASSERT_EQ(0, s.set_of_references().size());
 
-    cereal_pack::Reference<OneBool> b;
+    crunchy_bytes::Reference<OneBool> b;
     b.get().boolean().set(false);
     s.set_of_references().push_back(b);
 
@@ -305,18 +305,18 @@ TEST_F(SettingAndGettingTest, CanSetSetOfReferences) {
     s.set_of_references()[0] = oneBool;
     EXPECT_TRUE(s.set_of_references()[0].boolean());
 
-    cereal_pack::Reference<OneBool> oneBool2;
+    crunchy_bytes::Reference<OneBool> oneBool2;
     oneBool2.get().boolean().set(false);
     s.set_of_references()[0] = oneBool2;
     EXPECT_FALSE(s.set_of_references()[0].boolean());
 }
 
 TEST_F(SettingAndGettingTest, CanSetSetOfBuffers) {
-    using namespace cereal_pack_test::test;
+    using namespace crunchy_bytes_test::test;
     SimpleTest s;
 
     constexpr auto buffLen = SimpleTest::constants::set_of_buffers_item_max_length;
-    std::vector<cereal_pack::ConstLengthBuffer<buffLen>> buffs;
+    std::vector<crunchy_bytes::ConstLengthBuffer<buffLen>> buffs;
 
     buffs.resize(3);
     memset(buffs[0].get(), 0xFF, buffLen);
@@ -404,7 +404,7 @@ TEST_F(SettingAndGettingTest, CanSetSetOfBuffers) {
 }
 
 TEST_F(SettingAndGettingTest, SetNestedProperties) {
-    using namespace cereal_pack_test::test::nesting;
+    using namespace crunchy_bytes_test::test::nesting;
     Nesting n;
     n.simple_ref().string().set("Yeah");
     EXPECT_EQ("Yeah", n.simple_ref().string().get());
@@ -435,8 +435,8 @@ TEST_F(SettingAndGettingTest, SetNestedProperties) {
 
 TEST_F(SettingAndGettingTest, SetPropetiesUsingGlobals) {
     UsingGlobals g;
-    using namespace cereal_pack::globals;
-    uint8_t buff[max_cereal_pack_serial_length];
+    using namespace crunchy_bytes::globals;
+    uint8_t buff[max_crunchy_bytes_serial_length];
     memset(buff, 0x89, sizeof(buff));
     g.data_one().set(buff);
     EXPECT_EQ(0, memcmp(g.data_one().get(), buff, max_item_length));
@@ -475,14 +475,14 @@ TEST_F(SettingAndGettingTest, SetPropetiesUsingGlobals) {
         EXPECT_EQ(0, memcmp(g.some_list_of_buffers()[i].get(), buffers[i].data(), max_item_length));
     }
 
-    g.current_location().set(cereal_pack::globals::continent::asia);
-    EXPECT_EQ(cereal_pack::globals::continent::asia, g.current_location().get());
+    g.current_location().set(crunchy_bytes::globals::continent::asia);
+    EXPECT_EQ(crunchy_bytes::globals::continent::asia, g.current_location().get());
 
     for (unsigned int i = 0; i < UsingGlobals::constants::bucket_list_max_items; i++) {
-        g.bucket_list().push_back((cereal_pack::globals::continent)i);
+        g.bucket_list().push_back((crunchy_bytes::globals::continent)i);
     }
     for (unsigned int i = 0; i < UsingGlobals::constants::bucket_list_max_items; i++) {
-        EXPECT_EQ((cereal_pack::globals::continent)i, g.bucket_list().get()[i]);
+        EXPECT_EQ((crunchy_bytes::globals::continent)i, g.bucket_list().get()[i]);
     }
 
     EXPECT_EQ(g.serial_length(), g.max_serial_length());

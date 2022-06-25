@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(CerealPackTests CXX)
+project(CrunchyBytesTests CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,7 +10,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
     set(WFLAGS "-Wall -Wextra -Werror")
 endif()
 
-set(CEREAL_PACK_SCHEMA_FILES
+set(CRUNCHY_BYTES_SCHEMA_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/enum_header.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/name_header.toml"
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/type_one.toml"
@@ -18,10 +18,10 @@ set(CEREAL_PACK_SCHEMA_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/test-schemas/type_three.toml"
     )
 
-set(CEREAL_PACK_GLOBALS "${CMAKE_CURRENT_SOURCE_DIR}/../test_globals.toml")
-set(CEREAL_PACK_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/test-schemas")
+set(CRUNCHY_BYTES_GLOBALS "${CMAKE_CURRENT_SOURCE_DIR}/../test_globals.toml")
+set(CRUNCHY_BYTES_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/test-schemas")
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../" cereal_pack_interface)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../" crunchy_bytes_interface)
 
 # GTEST
 include(FetchContent)
@@ -37,4 +37,4 @@ set(test_sources "")
 file(GLOB_RECURSE test_sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
 
 add_executable(runTests ${test_sources})
-target_link_libraries(runTests pthread cereal_pack_interface gtest_main)
+target_link_libraries(runTests pthread crunchy_bytes_interface gtest_main)
